@@ -32,11 +32,11 @@ socket.addEventListener('message', event => {
   switch (packet.action) {
     case bggl.actions.SIGNUP:
       TOKEN = packet.token;
-      document.cookie = "token=" + TOKEN;
+      saveCookie("token", TOKEN);
       break;
     case bggl.actions.NICK:
       NICK = packet.nick;
-      document.cookie = "nick=" + NICK;
+      saveCookie("nick", NICK);
       nickWrapperEl.innerHTML = renderNick(packet.nick);
       break;
     case bggl.actions.START:
@@ -221,4 +221,10 @@ function init() {
   } else {
     nickWrapperEl.innerHTML = renderNick(NICK);
   }
+}
+
+
+function saveCookie(key, value) {
+  document.cookie = key + "=" + value +
+      ";path=/;expires=Fri, 31 Dec 9999 23:59:59 GMT";
 }
