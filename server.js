@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const https = require("https");
 const fs = require("fs");
 
 const bggl = require("./public/js/common/bggl.js");
@@ -34,7 +35,11 @@ const game = {
  */
 const nickMap = {}
 
-const wss = new WebSocket.Server({port: 9000});
+const server = new https.createServer({
+  cert: fs.readFileSync('/etc/letsencrypt/live/ariblumenthal.com/fullchain.pem'),
+  key: fs.readFileSync('/etc/letsencrypt/live/ariblumenthal.com/privkey.pem')
+}).listen(9000);
+const wss = new WebSocket.Server({server});
 wss.on('connection', client => {
   client.on('message', data => {
     const packet = JSON.parse(data);

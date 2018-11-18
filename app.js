@@ -10,6 +10,7 @@ const server = require('./server.js');
 const users = require('./routes/users');
 
 const app = express();
+app.listen(3000);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

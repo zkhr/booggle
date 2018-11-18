@@ -1,4 +1,4 @@
-const socket = new WebSocket('ws://ariblumenthal.com:9000');
+const socket = new WebSocket('wss://ariblumenthal.com:9000');
 
 const startEl = document.getElementById('start');
 const boardEl = document.getElementById('board');
