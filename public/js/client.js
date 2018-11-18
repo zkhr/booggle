@@ -1,110 +1,69 @@
 const socket = new WebSocket('wss://ariblumenthal.com:9000');
 
-const startEl = document.getElementById('start');
-const boardEl = document.getElementById('board');
-const wordinputEl = document.getElementById('wordinput');
-const wordsendEl = document.getElementById('wordsend');
-const paperEl = document.getElementById('paper');
-const signupEl = document.getElementById('signup');
-const nickWrapperEl = document.getElementById('nickwrapper');
+const playerTmpl = compileHbs("player-tmpl");
+Handlebars.registerPartial('player', playerTmpl);
 
-let TOKEN;
-let NICK;
-init();
+const endgameTmpl = compileHbs("endgame-tmpl");
+const gameTmpl = compileHbs("game-tmpl");
+const prescreenTmpl = compileHbs("prescreen-tmpl");
+const wordTmpl = compileHbs("word-tmpl");
 
-socket.addEventListener('open', () => {
-  const packet = {
-    action: bggl.actions.SIGNUP,
-  }
-  if (TOKEN) {
-    packet.token = TOKEN;
-  }
-  if (NICK) {
-    packet.nick = NICK;
-  }
-  send(packet);
-});
+const pageEl = document.getElementById('page');
 
+// Whether the user has joined the lobby.
+let joined = false;
+
+// Elements used during the game phase.
+let wordinputEl, paperEl;
+
+// The players roster id, after joining the game.
+let lobbyRosterId;
+
+// Persistent values stored in the cache.
+let token, nick, boo;
+initCookieData();
+loadStartingPage();
 
 socket.addEventListener('message', event => {
   const packet = JSON.parse(event.data);
   console.log("[packet]", packet);
+  if (!joined && packet.action != bggl.actions.JOIN) {
+    console.log("[dropped]");
+    return;
+  }
+
   switch (packet.action) {
-    case bggl.actions.SIGNUP:
-      TOKEN = packet.token;
-      saveCookie("token", TOKEN);
+    case bggl.actions.JOIN:
+      joined = true;
+      saveAllCookies(packet);
+      loadWorld(packet.world);
       break;
-    case bggl.actions.NICK:
-      NICK = packet.nick;
-      saveCookie("nick", NICK);
-      nickWrapperEl.innerHTML = renderNick(packet.nick);
+    case bggl.actions.ADD_PLAYER:
+      addPlayer(packet.rosterId, packet.nick, packet.boo);
+      break;
+    case bggl.actions.REMOVE_PLAYER:
+      removePlayer(packet.rosterId);
       break;
     case bggl.actions.START:
-      boardEl.classList.remove('disabled');
-      wordinputEl.disabled = false;
-      wordsendEl.disabled = false;
-      wordinputEl.focus();
-      boardEl.innerHTML = renderLetters(packet.letters);
-      paperEl.innerHTML = '';
-      paperEl.classList.add('words');
+      loadGamePage(packet.letters);
       break;
     case bggl.actions.SEND_WORD:
-      paperEl.innerHTML = renderWord(packet.word, packet.valid) +
-          paperEl.innerHTML;
+      const renderedWord = wordTmpl({word: packet.word, valid: packet.valid});
+      paperEl.innerHTML = renderedWord + paperEl.innerHTML;
       break;
     case bggl.actions.END:
-      boardEl.classList.add('disabled');
-      wordinputEl.value = '';
-      wordinputEl.disabled = true;
-      wordsendEl.disabled = true;
-      paperEl.classList.remove('words');
-      paperEl.innerHTML = renderResults(
-          packet.words, packet.points, packet.nicks);
+      loadEndGamePage(packet.results, packet.players);
       break;
     default:
       console.log("[err] Invalid message from server.", packet.action);
   }
 });
 
-
-startEl.addEventListener('click', () => {
-  send({action: bggl.actions.START});
-});
-
-
-wordsendEl.addEventListener('click', handleWord);
-
-
-wordinputEl.addEventListener('keypress', e => {
-  if (e.which == 13) {
-    handleWord();
-  }
-});
-
-
-nickWrapperEl.addEventListener('click', event => {
-  if (event.target.id == "signup" || event.target.id == "nick") {
-    nickWrapperEl.innerHTML = renderNickPicker();
-  } else if (event.target.id == "nicksend") {
-    const nick = document.getElementById('nickinput').value;
-    if (nick === "") {
-      return;
-    }
-    send({action: bggl.actions.NICK, token: TOKEN, nick: nick});
-  }
-});
-
-
 function handleWord() {
   const word = wordinputEl.value;
   wordinputEl.value = '';
-  send({
-    action: bggl.actions.SEND_WORD,
-    token: TOKEN,
-    word: word
-  });
+  send({action: bggl.actions.SEND_WORD, token, word});
 };
-
 
 /**
  * Sends a packet to the server via the websocket.
@@ -116,115 +75,121 @@ function send(packet) {
   socket.send(message);
 }
 
+function loadStartingPage() {
+  const joinEl = document.getElementById('join');
+  joinEl.addEventListener('click', () => {
+    const newNick = document.getElementById('nickinput').value;
+    const newBoo = document.getElementById('booinput').value;
+    send({action: bggl.actions.JOIN, token, nick: newNick, boo: newBoo});
+  });
+}
 
 /**
- * Creates an element containg the letters provided by the server.
- * @param {!Array<string>} letters
- * @return {string}
+ * Takes the world data from the server and loads either the pre-game or
+ * mid-game.
  */
-function renderLetters(letters) {
-  let html = '';
+function loadWorld(world) {
+  lobbyRosterId = world.rosterId;
+  if (world.state == bggl.states.IN_PROGRESS)  {
+    loadGamePage(world.letters);
+  } else {
+    loadPrescreenPage(world.players);
+  }
+}
+
+function loadPrescreenPage(players) {
+  // todo - add a check to verify player list. might be out of date.
+  pageEl.innerHTML = prescreenTmpl({players});
+
+  const startEl = document.getElementById('start');
+  startEl.addEventListener('click', () => send({action: bggl.actions.START}));
+}
+
+function loadGamePage(letters) {
   letters.forEach(letter => {
     if (letter == "Q") {
       letter += "u";
     }
-    html += "<div class='cell'>" + letter + "</div>";
   });
-  return html;
-}
+  pageEl.innerHTML = gameTmpl({letters});
 
-
-/**
- * Creates an element containing the word provided by the server.
- * @param {string} word The word that the user submitted.
- * @param {boolean} valid Whether the word is a valid word
- * @return {string}
- */
-function renderWord(word, valid) {
-  return "<div class='word" + (valid ? " valid" : "") + "'>" + word + "</div>";
-}
-
-
-/**
- * Creates an element rendering the results of a game.
- * @param {!Object<number, Set>} map A map from player token to that player's
- *    words.
- * @return {string}
- */
-function renderResults(wordsMap, pointsMap, nickMap) {
-  const allWordCounts = {};
-  for (const token in wordsMap) {
-    for (const word of wordsMap[token]) {
-      allWordCounts[word]= allWordCounts[word] + 1 || 1;
+  wordinputEl = document.getElementById('wordinput');
+  wordinputEl.addEventListener('keypress', e => {
+    if (e.which == 13) {
+      handleWord();
     }
+  });
+  paperEl = document.getElementById('paper');
+}
+
+function loadEndGamePage(results, players) {
+  paperEl = null;
+  wordInputEl = null;
+
+  pageEl.innerHTML = endgameTmpl({results});
+
+  const closeEl = document.getElementById('close');
+  closeEl.addEventListener('click', () => loadPrescreenPage(players));
+}
+
+function addPlayer(rosterId, nick, boo) {
+  if (lobbyRosterId == rosterId) {
+    return;
   }
+  updatePlayerCount(1);
+  const playersEl = document.getElementById('players');
+  playersEl.innerHTML += playerTmpl({rosterId, nick, boo});
+}
 
-  let html = '';
-  for (const token in wordsMap) {
-    const wordElements = wordsMap[token].sort().map(word => {
-      return "<div class='solution" + (allWordCounts[word] > 1 ? " common" : "") +
-          "'>" + word + "</div>";
-    });
-    html += "<div>[" + pointsMap[token] + "] " +
-        (nickMap[token] ? nickMap[token] : "Player " + token) + ": " +
-        wordElements.join(', ') + "</div>";
+function removePlayer(rosterId) {
+  if (lobbyRosterId == rosterId) {
+    return;
   }
-  return html;
+  updatePlayerCount(-1);
+  const playerEl = document.querySelector(`[data-roster="${rosterId}"]`);
+  playerEl.remove();
 }
 
-
-/**
- * Creates a signup button to register a nick.
- */
-function renderSignup() {
-  return "<input id='signup' class='button' type='button' value='Sign In'>" +
-      "</input>";
+function updatePlayerCount(delta) {
+  const numPlayersEl = document.getElementById("numPlayers");
+  const count = parseInt(numPlayersEl.innerHTML, 10);
+  numPlayersEl.innerHTML = count + delta;
 }
 
-
-/**
- * Creates an element for registering a nick.
- */
-function renderNickPicker() {
-  return "<input id='nickinput' class='textinput pair' type='text'" +
-      "placeholder='nickname'></input>" +
-      "<input id='nicksend' class='button pair' type='button' value='Save'>" +
-      "</input>";
-}
-
-
-/**
- * Creates an element with the user's nickname that when clicked opens up the
- * nickname picker.
- */
-function renderNick(nick) {
-  return "<div id='nick' class='nickname'>" + nick + "</div>";
-}
-
-
-function init() {
+function initCookieData() {
   const parts = document.cookie.split("; ");
   for (const part of parts) {
     const [key, value] = part.split("=");
     switch (key) {
       case "token":
-        TOKEN = value;
+        token = value;
         break;
       case "nick":
-        NICK = value;
+        nick = value;
+        break;
+      case "boo":
+        boo = value;
         break;
     }
   }
-
-  if (NICK === undefined) {
-    nickWrapperEl.innerHTML = renderSignup();
-  } else {
-    nickWrapperEl.innerHTML = renderNick(NICK);
-  }
 }
 
+function saveAllCookies(packet) {
+  token = packet.token;
+  nick = packet.nick;
+  boo = packet.boo;
+  saveCookie("token", token);
+  saveCookie("nick", nick);
+  saveCookie("boo", boo);
+}
 
 function saveCookie(key, value) {
   document.cookie = key + "=" + value +
       ";path=/;expires=Fri, 31 Dec 9999 23:59:59 GMT";
+}
+
+function compileHbs(name) {
+  // At some point I should pre-compile these...
+  const source = document.getElementById(name).innerHTML
+  return Handlebars.compile(source);
 }

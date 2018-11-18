@@ -2,63 +2,24 @@ body {
   background-color: #e8e8e8;
   margin: 0;
   padding: 0;
-  font: 0 sans-serif; }
+  font: sans-serif; }
 
-.header {
-  background-color: #f44336;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
-  height: 64px;
-  width: 100%;
-  position: fixed; }
+.players {
+  padding: 10px 0; }
 
-.header .textinput {
-  width: 60px; }
+.player {
+  border: 1px solid #000;
+  display: inline-block; }
 
-#start {
-  position: fixed;
-  right: 12px;
-  top: 16px; }
-
-.spacer {
-  height: 64px; }
-
-.title {
-  color: #fff;
-  font-size: 24px;
-  left: 24px;
-  top: 18px;
-  position: fixed; }
-
-.inputs {
-  position: fixed;
-  right: 100px;
-  top: 16px; }
-
-.nickname {
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  padding-top: 7px; }
-
-.nickname:hover {
-  cursor: pointer;
-  text-decoration: underline; }
-
-.content {
+.game {
   display: flex;
   justify-content: center;
   padding: 16px 0 0; }
 
-p {
-  margin: 0; }
-
-#board {
+.board {
   display: inline-block;
   vertical-align: top;
-  width: 160px; }
-
-#board.disabled .cell {
-  background-color: #ddd; }
+  width: 175px; }
 
 .cell {
   background-color: #fafafa;
@@ -88,23 +49,6 @@ p {
   margin-bottom: 10px;
   vertical-align: top;
   width: 134px; }
-
-.words {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap; }
-
-.word.valid {
-  color: #4caf50; }
-
-.word:not(.valid) {
-  color: #f44336; }
-
-.solution {
-  display: inline-block; }
-
-.solution.common {
-  color: #bdbdbd; }
 
 .button {
   background-color: #f6f6f6;
@@ -141,10 +85,10 @@ p {
   white-space: nowrap;
   width: 212px; }
 
-.button.pair {
-  border-radius: 0 2px 2px 0; }
+.word.valid {
+  color: #4caf50; }
 
-.textinput.pair {
-  border-radius: 2px 0 0 2px; }
+.word:not(.valid) {
+  color: #f44336; }
 
 /*# sourceMappingURL=style.css.map */

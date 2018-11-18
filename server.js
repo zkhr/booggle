@@ -6,11 +6,6 @@ const bggl = require("./public/js/common/bggl.js");
 
 const WebSocket = require('ws');
 
-const State = {
-  STOPPED: 0,
-  IN_PROGRESS: 1
-};
-
 const BOARD_SIZE = 4;
 
 const ENGLISH_WORDS = loadDictionary();
@@ -19,21 +14,20 @@ const TILES = ["DEXLIR", "TUICOM", "OTTAOW", "ZNRNLH", "POHCAS", "LTYRET",
     "RLVEDY", "TVRHWE", "GEWHNE", "JBOAOB", "TYTDIS", "IENSEU", "UMHQIN",
     "NAEAGE", "FAKPSF", "ESTISO"];
 
-const game = {
-  // State of the game
-  state: State.STOPPED,
+// Global state, we only have a single in-memory lobby instance for now.
+const lobby = {
+  // State of the lobby.
+  state: bggl.states.STOPPED,
 
   // List of 16 letters
   letters: null,
 
   // Map from player token to the set of valid words for that player.
-  words: {}
-};
+  words: {},
 
-/**
- * A mapping from the users token to their nickname.
- */
-const nickMap = {}
+  // Map from player token to the data for that user.
+  users: {}
+};
 
 const server = new https.createServer({
   cert: fs.readFileSync('/etc/letsencrypt/live/ariblumenthal.com/fullchain.pem'),
@@ -44,11 +38,8 @@ wss.on('connection', client => {
   client.on('message', data => {
     const packet = JSON.parse(data);
     switch (packet.action) {
-      case bggl.actions.SIGNUP:
-        handleSignup(client, packet.token, packet.nick);
-        break;
-      case bggl.actions.NICK:
-        registerNick(client, packet.token, packet.nick);
+      case bggl.actions.JOIN:
+        handleJoin(client, packet.token, packet.nick, packet.boo);
         break;
       case bggl.actions.START:
         startGame(client);
@@ -60,71 +51,121 @@ wss.on('connection', client => {
         console.log("[err] Unknown action:", packet.action);
     }
   });
+  client.on('close', () => handleLeave(client, client.token));
 
-  if (game.state == State.IN_PROGRESS) {
+  if (lobby.state == bggl.states.IN_PROGRESS) {
     send(client, {
       action: bggl.actions.START,
-      letters: game.letters
+      letters: lobby.letters
     });
   }
 });
 
+function handleJoin(client, token, nick = "Unnamed Boo", boo = 1) {
+  const rosterId = crypto.randomBytes(16).toString('hex')
+  if (!token) {
+    token = crypto.randomBytes(16).toString('hex');
+  }
+  // todo - handle users with multiple clients.
+  client.token = token;
+  lobby.users[token] = {token, nick, boo, rosterId, here: true};
 
-function handleSignup(client, token, nick) {
-  if (token && nick) {
-    nickMap[token] = nick;
+  const world = {
+    state: lobby.state,
+    players: toClientPlayers(),
+    letters: lobby.letters,
+    rosterId
+  };
+  send(client, {action: bggl.actions.JOIN, token, nick, boo, world});
+  broadcast({action: bggl.actions.ADD_PLAYER, rosterId, nick, boo});
+}
+
+/**
+ * Converts the lobby users mapping to a client-renderable list of players.
+ */
+function toClientPlayers() {
+  const players = [];
+  for (const token in lobby.users) {
+    const serverPlayer = lobby.users[token];
+    players.push({
+      rosterId: serverPlayer.rosterId,
+      nick: serverPlayer.nick,
+      boo: serverPlayer.boo
+    });
+  }
+  return players;
+}
+
+function handleLeave(client, token) {
+  if (!token) {
     return;
   }
 
-  const newToken = crypto.randomBytes(16).toString('hex');
-  send(client, {action: bggl.actions.SIGNUP, token: newToken});
+  // If we're in game, wait to remove the user until the game is over.
+  if (lobby.state == bggl.states.IN_PROGRESS) {
+    lobby.users[client.token].here = false;
+  } else {
+    const rosterId = lobby.users[token].rosterId;
+    broadcast({action: bggl.actions.REMOVE_PLAYER, rosterId});
+    delete lobby.users[client.token];
+  }
 }
-
-function registerNick(client, token, nick) {
-  nickMap[token] = nick;
-  send(client, {action: bggl.actions.NICK, nick: nick});
-}
-
 
 function startGame(startingClient) {
-  if (game.state == State.IN_PROGRESS) {
+  if (lobby.state == bggl.states.IN_PROGRESS) {
     send(startingClient, {response: 'nope'});
     return;
   }
 
-  game.state = State.IN_PROGRESS;
-  game.letters = getRandomLetters();
-  game.words = {};
+  lobby.state = bggl.states.IN_PROGRESS;
+  lobby.letters = getRandomLetters();
+  lobby.words = {};
   setTimeout(endGame,  3 * 60 * 1000); // 3 min
-  wss.clients.forEach(client => {
-    send(client, {
-      action: bggl.actions.START,
-      letters: game.letters,
-    });
+  broadcast({
+    action: bggl.actions.START,
+    letters: lobby.letters,
   });
 }
 
 
 function endGame() {
+  lobby.state = bggl.states.STOPPED;
+
   const playerNickMap = {};
-  for (const token in game.words) {
-    playerNickMap[token] = nickMap[token];
+  for (const token in lobby.words) {
+    playerNickMap[token] = lobby.users[token];
+  }
+
+  // Remove any users that have dropped since the game started.
+  for (const token in lobby.users) {
+    if (!lobby.users[token].here) {
+      delete lobby.users[token];
+    }
   }
 
   broadcast({
     action: bggl.actions.END,
-    words: game.words,
-    points: scorePoints(),
-    nicks: playerNickMap
+    results: buildGameResults(),
+    players: toClientPlayers()
   });
-  game.state = State.STOPPED;
 }
 
 
+function buildGameResults() {
+  const results = {scores: [], cards: []};
+  const pointsList = scorePoints();
+  for (const [token, points] of pointsList) {
+    const user = lobby.users[token];
+    const words = lobby.words[token];
+    results.scores.push({boo: user.boo, nick: user.nick, points, words});
+  }
+  return results;
+}
+
 function scorePoints() {
-  const pointsMap = {}
-  for (token in game.words) {
-    pointsMap[token] = game.words[token].reduce((score, word) => {
+  const pointsList = [];
+  for (const token in lobby.words) {
+    const points = lobby.words[token].reduce((score, word) => {
       if (word.length == 3 || word.length == 4) {
         return score + 1;
       } else if (word.length == 5) {
@@ -137,26 +178,27 @@ function scorePoints() {
         return score + 11;
       }
     }, 0);
+    pointsList.push([token, points]);
   }
-  return pointsMap;
+  return pointsList.sort((a,b) => a[1] - b[1]);
 }
 
 
 function handleWord(client, token, word) {
-  if (game.state == State.STOPPED) {
+  if (lobby.state == bggl.states.STOPPED) {
     send(client, {response: 'nope'});
     return;
   }
 
-  // Enroll the player in the game.
-  if (!game.words[token]) {
-    game.words[token] = [];
+  // Enroll the player in the lobby.
+  if (!lobby.words[token]) {
+    lobby.words[token] = [];
   }
 
   word = word.toLowerCase();
   const valid = isValidWord(word, token);
   if (valid) {
-    game.words[token].push(word);
+    lobby.words[token].push(word);
   }
   send(client, {
     action: bggl.actions.SEND_WORD,
@@ -167,7 +209,7 @@ function handleWord(client, token, word) {
 
 
 function isValidWord(word, token) {
-  return word.length >= 3 && game.words[token].indexOf(word) < 0 &&
+  return word.length >= 3 && lobby.words[token].indexOf(word) < 0 &&
       isDictionaryWord(word) && isReachableWord(word);
 }
 
@@ -181,7 +223,7 @@ function isReachableWord(word) {
   word = word.toUpperCase();
   let possiblePaths = [];
   let prevLetter = word[0];
-  game.letters.forEach((letter, index) => {
+  lobby.letters.forEach((letter, index) => {
     if (letter == word[0]) {
       possiblePaths.push([index])
     }
@@ -223,7 +265,7 @@ function isReachableWord(word) {
       }
       validIndices.forEach(index => {
         if (index >= 0 && index < BOARD_SIZE * BOARD_SIZE &&
-            game.letters[index] == word[i] && path.indexOf(index) < 0) {
+            lobby.letters[index] == word[i] && path.indexOf(index) < 0) {
           const newPath = Array.from(path);
           newPath.push(index);
           newPaths.push(newPath);
