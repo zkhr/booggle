@@ -7,7 +7,6 @@ const path = require('path');
 
 const index = require('./routes/index');
 const server = require('./server.js');
-const users = require('./routes/users');
 
 const app = express();
 app.listen(3000);
@@ -30,7 +29,6 @@ app.use(require('node-sass-middleware')({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
