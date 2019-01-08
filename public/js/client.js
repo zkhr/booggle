@@ -79,8 +79,18 @@ function loadStartingPage() {
   const joinEl = document.getElementById('join');
   joinEl.addEventListener('click', () => {
     const newNick = document.getElementById('nickinput').value;
-    const newBoo = document.getElementById('booinput').value;
+    const newBoo = document.querySelector('.boo.selected').dataset.index;
     send({action: bggl.actions.JOIN, token, nick: newNick, boo: newBoo});
+  });
+
+  const boosEl = document.getElementById('boos');
+  boosEl.addEventListener('click', evt => {
+    const index = evt.target.dataset.index;
+    if (index > 0) {
+      const selectedEl = document.querySelector('.boo.selected');
+      selectedEl.classList.remove('selected');
+      evt.target.classList.add('selected');
+    }
   });
 }
 

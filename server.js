@@ -25,6 +25,9 @@ const lobby = {
   // Map from player token to the set of valid words for that player.
   words: {},
 
+  // Map from words to the number of players with that word.
+  scoringMap: {},
+
   // Map from player token to the data for that user.
   users: {}
 };
@@ -61,8 +64,11 @@ wss.on('connection', client => {
   }
 });
 
-function handleJoin(client, token, nick = "Unnamed Boo", boo = 1) {
+function handleJoin(client, token, nick, boo = 1) {
   const rosterId = crypto.randomBytes(16).toString('hex')
+  if (!nick) {
+    nick = "Unnamed Boo";
+  }
   if (!token) {
     token = crypto.randomBytes(16).toString('hex');
   }
@@ -120,7 +126,7 @@ function startGame(startingClient) {
   lobby.state = bggl.states.IN_PROGRESS;
   lobby.letters = getRandomLetters();
   lobby.words = {};
-  setTimeout(endGame,  3 * 60 * 1000); // 3 min
+  setTimeout(endGame, 3 * 60 * 1000); // 3 min
   broadcast({
     action: bggl.actions.START,
     letters: lobby.letters,
@@ -130,6 +136,8 @@ function startGame(startingClient) {
 
 function endGame() {
   lobby.state = bggl.states.STOPPED;
+  const results = buildGameResults();
+  const players = toClientPlayers();
 
   const playerNickMap = {};
   for (const token in lobby.words) {
@@ -143,11 +151,7 @@ function endGame() {
     }
   }
 
-  broadcast({
-    action: bggl.actions.END,
-    results: buildGameResults(),
-    players: toClientPlayers()
-  });
+  broadcast({action: bggl.actions.END, results, players});
 }
 
 
@@ -156,8 +160,17 @@ function buildGameResults() {
   const pointsList = scorePoints();
   for (const [token, points] of pointsList) {
     const user = lobby.users[token];
-    const words = lobby.words[token];
-    results.scores.push({boo: user.boo, nick: user.nick, points, words});
+    const words = lobby.words[token].sort();
+    const wordsWithMetadata = [];
+    for (const word of words) {
+      wordsWithMetadata.push({word, unique: lobby.scoringMap[word] == 1});
+    }
+    results.scores.push({
+      boo: user.boo,
+      nick: user.nick,
+      words: wordsWithMetadata,
+      points
+    });
   }
   return results;
 }
@@ -180,7 +193,7 @@ function scorePoints() {
     }, 0);
     pointsList.push([token, points]);
   }
-  return pointsList.sort((a,b) => a[1] - b[1]);
+  return pointsList.sort((a,b) => b[1] - a[1]);
 }
 
 
@@ -199,6 +212,7 @@ function handleWord(client, token, word) {
   const valid = isValidWord(word, token);
   if (valid) {
     lobby.words[token].push(word);
+    lobby.scoringMap[word] = lobby.scoringMap[word] + 1 || 1;
   }
   send(client, {
     action: bggl.actions.SEND_WORD,

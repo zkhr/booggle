@@ -1,53 +1,177 @@
 body {
-  background-color: #e8e8e8;
+  background-color: #f0f0f0;
+  font-family: 'Roboto';
+  font: sans-serif;
   margin: 0;
-  padding: 0;
-  font: sans-serif; }
+  padding: 0; }
+
+.content {
+  padding: 8px; }
+
+.title {
+  color: rgba(0, 0, 0, 0.87);
+  font-family: "Viga";
+  font-size: 30px;
+  line-height: 35px; }
+  .title .highlight {
+    color: #f66161; }
+
+.inputwrapper {
+  padding-top: 16px; }
+  .inputwrapper .textinput {
+    margin-top: 8px; }
+  .inputwrapper .boo {
+    border: 1px dashed #d4d4d4;
+    display: inline-block;
+    margin-right: 8px;
+    margin-top: 8px; }
+  .inputwrapper .boo:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    cursor: pointer; }
+  .inputwrapper .boo.selected {
+    border: 1px solid #ff0000; }
+
+.boo {
+  background-image: url("/booggle/images/boos.png");
+  height: 40px;
+  width: 40px; }
+
+.boo-1 {
+  background-position: 0px 0px; }
+
+.boo-2 {
+  background-position: 40px 0px; }
+
+.boo-3 {
+  background-position: 80px 0px; }
+
+.boo-4 {
+  background-position: 120px 0px; }
+
+.boo-5 {
+  background-position: 0px -40px; }
+
+.boo-6 {
+  background-position: 40px -40px; }
+
+.boo-7 {
+  background-position: 80px -40px; }
+
+.boo-8 {
+  background-position: 120px -40px; }
+
+.boo-9 {
+  background-position: 0px -80px; }
+
+.boo-10 {
+  background-position: 40px -80px; }
+
+.boo-11 {
+  background-position: 80px -80px; }
+
+.boo-12 {
+  background-position: 120px -80px; }
+
+.boo-13 {
+  background-position: 0px -120px; }
+
+.boo-14 {
+  background-position: 40px -120px; }
+
+.boo-15 {
+  background-position: 80px -120px; }
+
+.boo-16 {
+  background-position: 120px -120px; }
 
 .players {
-  padding: 10px 0; }
+  padding: 12px 0; }
 
 .player {
-  border: 1px solid #000;
-  display: inline-block; }
+  align-items: center;
+  display: flex; }
 
-.game {
-  display: flex;
-  justify-content: center;
-  padding: 16px 0 0; }
+.nick {
+  color: rgba(0, 0, 0, 0.87);
+  font-family: "Viga";
+  font-size: 24px;
+  margin-left: 8px; }
+
+.endgame .title {
+  padding-bottom: 8px; }
+
+.rank {
+  align-items: center;
+  display: flex; }
+  .rank .nick {
+    flex-grow: 2; }
+  .rank .points {
+    font-family: "Viga";
+    width: 50px; }
+
+.card {
+  background-color: #fafafa;
+  border-radius: 4px;
+  border: none;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  color: rgba(0, 0, 0, 0.87);
+  margin: 12px 0;
+  overflow: hidden; }
+  .card .toprow {
+    align-items: center;
+    background-color: #cccccc;
+    display: flex;
+    padding: 4px; }
+  .card .words {
+    padding: 8px; }
+
+.game .textinput {
+  background: #fafafa;
+  margin-left: 8px;
+  width: 152px; }
+
+.timer {
+  background-color: #aaa;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  height: 12px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 2; }
 
 .board {
-  display: inline-block;
-  vertical-align: top;
-  width: 175px; }
+  margin: 12px 0 8px;
+  width: 176px; }
 
 .cell {
   background-color: #fafafa;
+  color: rgba(0, 0, 0, 0.87);
   border: none;
   border-radius: 2px;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
   display: inline-block;
-  font-size: 20px;
-  height: 30px;
-  line-height: 30px;
-  margin: 0 10px 10px 0;
+  font-family: 'Rubik';
+  font-size: 28px;
+  height: 36px;
+  line-height: 36px;
+  margin-left: 8px;
+  margin-top: 8px;
   text-align: center;
-  width: 30px; }
+  width: 36px; }
 
 #paper {
+  position: absolute;
+  left: 184px;
+  top: 0;
+  min-height: 28px;
   background-color: #fafafa;
   border: none;
   border-radius: 2px;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
-  display: inline-block;
-  font-size: 10px;
-  font-weight: bold;
-  height: 134px;
-  line-height: 11px;
-  overflow: auto;
-  padding: 8px;
-  margin-bottom: 10px;
-  vertical-align: top;
+  font-size: 16px;
+  line-height: 18px;
+  padding: 20px 8px 8px;
+  overflow: hidden;
   width: 134px; }
 
 .button {
@@ -78,10 +202,9 @@ body {
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
   color: #212121;
   display: inline-block;
-  font-weight: bold;
   line-height: 2.5;
   outline: 2px solid transparent;
-  padding: 0 16px;
+  padding: 0 8px;
   white-space: nowrap;
   width: 212px; }
 
@@ -90,5 +213,8 @@ body {
 
 .word:not(.valid) {
   color: #f44336; }
+
+.words :not(.unique) {
+  color: #cccccc; }
 
 /*# sourceMappingURL=style.css.map */
