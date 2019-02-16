@@ -107,10 +107,11 @@ function handleLeave(client, token) {
     return;
   }
 
-  // If we're in game, wait to remove the user until the game is over.
   if (lobby.state == bggl.states.IN_PROGRESS) {
+    // If we're in game, wait to remove the user until the game is over.
     lobby.users[client.token].here = false;
-  } else {
+  } else if (token in lobby.users) {
+    // Otherwise, if they haven't already been removed, remove the user.
     const rosterId = lobby.users[token].rosterId;
     broadcast({action: bggl.actions.REMOVE_PLAYER, rosterId});
     delete lobby.users[client.token];
