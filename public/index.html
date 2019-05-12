@@ -63,7 +63,9 @@
     </script>
 
     <script id="game-tmpl" type="text/x-handlebars-template">
-      <div class="timer"></div>
+      <div class="timer">
+        <div class="timerInner" id="timer"></div>
+      </div>
       <div class="game">
         <div class="board">
           {{#each letters}}<div class="cell{{#ifeq this "Qu"}} qcell{{/ifeq}}">{{this}}</div>{{/each}}

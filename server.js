@@ -10,12 +10,9 @@ const BOARD_SIZE = 4;
 
 const ENGLISH_WORDS = loadDictionary();
 
-const TILES = ["QQQQQQ", "TUICOM", "OTTAOW", "ZNRNLH", "POHCAS", "LTYRET",
+const TILES = ["DEXLIR", "TUICOM", "OTTAOW", "ZNRNLH", "POHCAS", "LTYRET",
     "RLVEDY", "TVRHWE", "GEWHNE", "JBOAOB", "TYTDIS", "IENSEU", "UMHQIN",
     "NAEAGE", "FAKPSF", "ESTISO"];
-//const TILES = ["DEXLIR", "TUICOM", "OTTAOW", "ZNRNLH", "POHCAS", "LTYRET",
-//    "RLVEDY", "TVRHWE", "GEWHNE", "JBOAOB", "TYTDIS", "IENSEU", "UMHQIN",
-//    "NAEAGE", "FAKPSF", "ESTISO"];
 
 // Global state, we only have a single in-memory lobby instance for now.
 const lobby = {
@@ -24,6 +21,9 @@ const lobby = {
 
   // List of 16 letters
   letters: null,
+
+  // The start time of the game
+  startTime: null,
 
   // Map from player token to the set of valid words for that player.
   words: {},
@@ -83,6 +83,7 @@ function handleJoin(client, token, nick, boo = 1) {
     state: lobby.state,
     players: toClientPlayers(),
     letters: lobby.letters,
+    timeElapsed: Date.now() - lobby.startTime,
     rosterId
   };
   send(client, {action: bggl.actions.JOIN, token, nick, boo, world});
@@ -129,9 +130,10 @@ function startGame(startingClient) {
 
   lobby.state = bggl.states.IN_PROGRESS;
   lobby.letters = getRandomLetters();
+  lobby.startTime = Date.now();
   lobby.words = {};
   lobby.scoringMap = {};
-  setTimeout(endGame, 3 * 60 * 1000); // 3 min
+  setTimeout(endGame, bggl.GAME_LENGTH_MS);
   broadcast({
     action: bggl.actions.START,
     letters: lobby.letters,

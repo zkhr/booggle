@@ -23,6 +23,9 @@ let wordinputEl, paperEl;
 // The players roster id, after joining the game.
 let lobbyRosterId;
 
+// A callback to the function that updates the timer at the top of the game.
+let timerCallbackId;
+
 // Persistent values stored in the cache.
 let token, nick, boo;
 initCookieData();
@@ -49,7 +52,7 @@ socket.addEventListener('message', event => {
       removePlayer(packet.rosterId);
       break;
     case bggl.actions.START:
-      loadGamePage(packet.letters);
+      loadGamePage(packet.letters, 0);
       break;
     case bggl.actions.SEND_WORD:
       const renderedWord = wordTmpl({word: packet.word, valid: packet.valid});
@@ -105,7 +108,7 @@ function loadStartingPage() {
 function loadWorld(world) {
   lobbyRosterId = world.rosterId;
   if (world.state == bggl.states.IN_PROGRESS)  {
-    loadGamePage(world.letters);
+    loadGamePage(world.letters, world.timeElapsed);
   } else {
     loadPrescreenPage(world.players);
   }
@@ -119,7 +122,7 @@ function loadPrescreenPage(players) {
   startEl.addEventListener('click', () => send({action: bggl.actions.START}));
 }
 
-function loadGamePage(letters) {
+function loadGamePage(letters, timeElapsed) {
   for (let i = 0; i < letters.length; i++) {
     if (letters[i] == "Q") {
       letters[i] += "u";
@@ -134,9 +137,19 @@ function loadGamePage(letters) {
     }
   });
   paperEl = document.getElementById('paper');
+
+  // Update the page timer every second.
+  const startTime = Date.now() - timeElapsed;
+  const timerEl = document.getElementById('timer');
+  timerCallbackId = window.setInterval(() => {
+    const percent =
+      (Date.now() - startTime) / bggl.GAME_LENGTH_MS * 100;
+    timerEl.style.width = percent + "%";
+  }, 1000);
 }
 
 function loadEndGamePage(results, players) {
+  window.clearInterval(timerCallbackId);
   paperEl = null;
   wordInputEl = null;
 
