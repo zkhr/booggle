@@ -1,5 +1,9 @@
 const socket = new WebSocket('wss://ariblumenthal.com:9000');
 
+Handlebars.registerHelper('ifeq', function(a, b, options) {
+  return (a == b) ? options.fn(this) : options.inverse(this);
+});
+
 const playerTmpl = compileHbs("player-tmpl");
 Handlebars.registerPartial('player', playerTmpl);
 
@@ -116,11 +120,11 @@ function loadPrescreenPage(players) {
 }
 
 function loadGamePage(letters) {
-  letters.forEach(letter => {
-    if (letter == "Q") {
-      letter += "u";
+  for (let i = 0; i < letters.length; i++) {
+    if (letters[i] == "Q") {
+      letters[i] += "u";
     }
-  });
+  }
   pageEl.innerHTML = gameTmpl({letters});
 
   wordinputEl = document.getElementById('wordinput');

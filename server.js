@@ -10,9 +10,12 @@ const BOARD_SIZE = 4;
 
 const ENGLISH_WORDS = loadDictionary();
 
-const TILES = ["DEXLIR", "TUICOM", "OTTAOW", "ZNRNLH", "POHCAS", "LTYRET",
+const TILES = ["QQQQQQ", "TUICOM", "OTTAOW", "ZNRNLH", "POHCAS", "LTYRET",
     "RLVEDY", "TVRHWE", "GEWHNE", "JBOAOB", "TYTDIS", "IENSEU", "UMHQIN",
     "NAEAGE", "FAKPSF", "ESTISO"];
+//const TILES = ["DEXLIR", "TUICOM", "OTTAOW", "ZNRNLH", "POHCAS", "LTYRET",
+//    "RLVEDY", "TVRHWE", "GEWHNE", "JBOAOB", "TYTDIS", "IENSEU", "UMHQIN",
+//    "NAEAGE", "FAKPSF", "ESTISO"];
 
 // Global state, we only have a single in-memory lobby instance for now.
 const lobby = {
