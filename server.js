@@ -127,6 +127,7 @@ function startGame(startingClient) {
   lobby.state = bggl.states.IN_PROGRESS;
   lobby.letters = getRandomLetters();
   lobby.words = {};
+  lobby.scoringMap = {};
   setTimeout(endGame, 3 * 60 * 1000); // 3 min
   broadcast({
     action: bggl.actions.START,
