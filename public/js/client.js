@@ -31,6 +31,26 @@ let token, nick, boo;
 initCookieData();
 loadStartingPage();
 
+const BOO_COLORS = [
+  [], // no Boo 0
+  ["#fdd7d4", "#f43f32"], // Boo 1
+  ["#008000", "#00fe00"], // Boo 2
+  ["#878700", "#fdfd00"], // Boo 3
+  ["#5a0000", "#fa0000"], // Boo 4
+  ["#00c3c3", "#00fefe"], // Boo 5
+  ["#c78837", "#fcac46"], // Boo 6
+  ["#990099", "#fe00fe"], // Boo 7
+  ["#000088", "#0000fe"], // Boo 8
+  ["#560f77", "#6d1496"], // Boo 9
+  ["#254e1e", "#2e6226"], // Boo 10
+  ["#3d0000", "#810000"], // Boo 10
+  ["#a06e6e", "#feafaf"], // Boo 12
+  ["#555555", "#939393"], // Boo 13
+  ["#68405b", "#835073"], // Boo 14
+  ["#555524", "#93923f"], // Boo 15
+  ["#7377b6", "#9398e9"], // Boo 16
+];
+
 socket.addEventListener('message', event => {
   const packet = JSON.parse(event.data);
   console.log("[packet]", packet);
@@ -157,6 +177,46 @@ function loadEndGamePage(results, players) {
 
   const closeEl = document.getElementById('close');
   closeEl.addEventListener('click', () => loadPrescreenPage(players));
+
+  drawTelemetry(results);
+}
+
+function drawTelemetry(results) {
+  const canvasEl = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+
+  const maxScore = results.scores[0].points;
+
+  ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+  for (const rosterId in results.telemetryMap) {
+    const boo =
+        results.scores.filter(s => s.rosterId == rosterId).map(s => s.boo);
+    const gradient =
+        ctx.createLinearGradient(0, 0, canvasEl.width, canvasEl.height);
+    gradient.addColorStop(0, BOO_COLORS[boo][0]);
+    gradient.addColorStop(1, BOO_COLORS[boo][1]);
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+    ctx.moveTo(0, canvasEl.height);
+
+    const pairs = results.telemetryMap[rosterId];
+    let x, y;
+    for (let i = 0; i < pairs.length; i++) {
+      const msSinceStart = pairs[i][0];
+      const score = pairs[i][1];
+
+      x = (msSinceStart / bggl.GAME_LENGTH_MS) * canvasEl.width;
+      // boo is 40 px, max score ends at half of boo height
+      y = canvasEl.height - ((score / maxScore) * (canvasEl.height - 20));
+      // Straddle pixels to make look less bad
+      ctx.lineTo(x + 0.5, y + 0.5);
+    }
+
+    ctx.lineTo(canvasEl.width, y);
+    ctx.stroke();
+  }
 }
 
 function addPlayer(rosterId, nick, boo) {

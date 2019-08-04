@@ -28,6 +28,10 @@ const lobby = {
   // Map from player token to the set of valid words for that player.
   words: {},
 
+  // Map from player rosterId to a list of pairs containing the time since the
+  // start of the round (in ms) and the updated score at that time
+  telemetryMap: {},
+
   // Map from words to the number of players with that word.
   scoringMap: {},
 
@@ -68,7 +72,7 @@ wss.on('connection', client => {
 });
 
 function handleJoin(client, token, nick, boo = 1) {
-  const rosterId = crypto.randomBytes(16).toString('hex')
+  const rosterId = crypto.randomBytes(16).toString('hex');
   if (!nick) {
     nick = "Unnamed Boo";
   }
@@ -133,6 +137,7 @@ function startGame(startingClient) {
   lobby.startTime = Date.now();
   lobby.words = {};
   lobby.scoringMap = {};
+  lobby.telemetryMap = {};
   setTimeout(endGame, bggl.GAME_LENGTH_MS);
   broadcast({
     action: bggl.actions.START,
@@ -163,7 +168,7 @@ function endGame() {
 
 
 function buildGameResults() {
-  const results = {scores: [], cards: []};
+  const results = {telemetryMap: lobby.telemetryMap, scores: [], cards: []};
   const pointsList = scorePoints();
   for (const [token, points] of pointsList) {
     const user = lobby.users[token];
@@ -175,8 +180,9 @@ function buildGameResults() {
     results.scores.push({
       boo: user.boo,
       nick: user.nick,
+      rosterId: user.rosterId,
       words: wordsWithMetadata,
-      points
+      points,
     });
   }
   return results;
@@ -186,21 +192,26 @@ function scorePoints() {
   const pointsList = [];
   for (const token in lobby.words) {
     const points = lobby.words[token].reduce((score, word) => {
-      if (word.length == 3 || word.length == 4) {
-        return score + 1;
-      } else if (word.length == 5) {
-        return score + 2;
-      } else if (word.length == 6) {
-        return score + 3;
-      } else if (word.length == 7) {
-        return score + 5;
-      } else {
-        return score + 11;
-      }
+      return score + getPointsForWord(word);
     }, 0);
     pointsList.push([token, points]);
   }
   return pointsList.sort((a,b) => b[1] - a[1]);
+}
+
+
+function getPointsForWord(word) {
+  if (word.length == 3 || word.length == 4) {
+    return 1;
+  } else if (word.length == 5) {
+    return 2;
+  } else if (word.length == 6) {
+    return 3;
+  } else if (word.length == 7) {
+    return 5;
+  } else {
+    return 11;
+  }
 }
 
 
@@ -220,6 +231,7 @@ function handleWord(client, token, word) {
   if (valid) {
     lobby.words[token].push(word);
     lobby.scoringMap[word] = lobby.scoringMap[word] + 1 || 1;
+    updateTelemetry(token, word);
   }
   send(client, {
     action: bggl.actions.SEND_WORD,
@@ -300,6 +312,22 @@ function isReachableWord(word) {
     prevLetter = word[i];
   }
   return true;
+}
+
+
+function updateTelemetry(token, word) {
+  const rosterId = lobby.users[token].rosterId;
+  let prevScore;
+  if (rosterId in lobby.telemetryMap) {
+    const pairs = lobby.telemetryMap[rosterId];
+    prevScore = pairs[pairs.length - 1][1];
+  } else {
+    lobby.telemetryMap[rosterId] = [];
+    prevScore = 0;
+  }
+  const timeElapsed = Date.now() - lobby.startTime;
+  const currScore = prevScore + getPointsForWord(word);
+  lobby.telemetryMap[rosterId].push([timeElapsed, currScore]);
 }
 
 

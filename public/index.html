@@ -55,6 +55,7 @@
         <div><input id="start" class="button" type="button" value="start"></input></div>
       </div>
     </script>
+
     <script id="player-tmpl" type="text/x-handlebars-template">
       <div class="player" data-roster="{{rosterId}}">
         <div class="boo boo-{{boo}}" data-index="16"></div>
@@ -74,9 +75,11 @@
         <div id="paper"></div>
       </div>
     </script>
+
     <script id="word-tmpl" type="text/x-handlebars-template">
       <div class='word{{#if valid}} valid{{/if}}'>{{word}}</div>
     </script>
+
     <script id="endgame-tmpl" type="text/x-handlebars-template">
       <div class="endgame content">
         {{#each results.scores}}
@@ -102,9 +105,13 @@
             </div>
           </div>
         {{/each}}
+        <div class="card canvascard">
+         <canvas id="canvas" width="300" height="150"></canvas>
+        </div>
         <input id="close" class="button" type="button" value="close"></input>
       </div>
     </script>
+
     <script src="/booggle/js/handlebars-v4.0.12.js" type="text/javascript"></script>
     <script src="/booggle/js/common/bggl.js" type="text/javascript"></script>
     <script src="/booggle/js/client.js" type="text/javascript"></script>

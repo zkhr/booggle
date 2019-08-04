@@ -100,6 +100,12 @@ body {
 .endgame .title {
   padding-bottom: 8px; }
 
+.endgame .canvascard {
+  width: min-content; }
+
+.endgame #canvas {
+  display: block; }
+
 .rank {
   align-items: center;
   display: flex; }
