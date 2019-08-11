@@ -222,11 +222,13 @@ function getPointsForWord(word) {
 
 function handleWord(client, token, word) {
   if (lobby.state == bggl.states.STOPPED) {
-    send(client, {response: 'nope'});
+    send(client, {response: 'nope, the game over is over.'});
+    return;
+  } else if (!lobby.users[token]) {
+    send(client, {response: 'nope, you need to join the game first.'});
     return;
   }
 
-  // Enroll the player in the lobby.
   if (!lobby.words[token]) {
     lobby.words[token] = [];
   }
@@ -238,11 +240,7 @@ function handleWord(client, token, word) {
     lobby.scoringMap[word] = lobby.scoringMap[word] + 1 || 1;
     updateTelemetry(token, word);
   }
-  send(client, {
-    action: bggl.actions.SEND_WORD,
-    valid: valid,
-    word: word
-  });
+  send(client, {action: bggl.actions.SEND_WORD, valid, word});
 }
 
 
