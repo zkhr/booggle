@@ -183,6 +183,9 @@ function loadEndGamePage(results, players) {
 
 function drawTelemetry(results) {
   const canvasEl = document.getElementById('canvas');
+  const canvasCardEl = document.getElementById('canvascard');
+  canvasEl.width = canvasCardEl.clientWidth;
+
   const ctx = canvas.getContext('2d');
 
   const maxScore = results.scores[0].points;

@@ -6,7 +6,8 @@ body {
   padding: 0; }
 
 .content {
-  padding: 8px; }
+  padding: 8px;
+  max-width: 600px; }
 
 .title {
   color: rgba(0, 0, 0, 0.87);
@@ -34,6 +35,7 @@ body {
 .boo {
   background-image: url("/booggle/images/boos.png");
   height: 40px;
+  min-width: 40px;
   width: 40px; }
 
 .boo-1 {
@@ -101,10 +103,17 @@ body {
   padding-bottom: 8px; }
 
 .endgame .canvascard {
-  width: min-content; }
+  flex-grow: 1; }
 
 .endgame #canvas {
   display: block; }
+
+.endgame .board {
+  margin: 4px 0 12px;
+  min-width: 176px; }
+
+.multirow {
+  display: flex; }
 
 .rank {
   align-items: center;

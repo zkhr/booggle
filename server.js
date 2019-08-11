@@ -168,7 +168,12 @@ function endGame() {
 
 
 function buildGameResults() {
-  const results = {telemetryMap: lobby.telemetryMap, scores: [], cards: []};
+  const results = {
+    letters: lobby.letters,
+    telemetryMap: lobby.telemetryMap,
+    scores: [],
+    cards: []
+  };
   const pointsList = scorePoints();
   for (const [token, points] of pointsList) {
     const user = lobby.users[token];

@@ -105,8 +105,13 @@
             </div>
           </div>
         {{/each}}
-        <div class="card canvascard">
-         <canvas id="canvas" width="300" height="150"></canvas>
+        <div class="multirow">
+          <div id="canvascard" class="card canvascard">
+            <canvas id="canvas" height="168"></canvas>
+          </div>
+          <div class="board">
+            {{#each results.letters}}<div class="cell{{#ifeq this "Qu"}} qcell{{/ifeq}}">{{this}}</div>{{/each}}
+          </div>
         </div>
         <input id="close" class="button" type="button" value="close"></input>
       </div>
