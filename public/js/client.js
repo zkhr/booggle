@@ -14,6 +14,8 @@ const wordTmpl = compileHbs("word-tmpl");
 
 const pageEl = document.getElementById('page');
 
+let players = [];
+
 // Whether the user has joined the lobby.
 let joined = false;
 
@@ -79,7 +81,7 @@ socket.addEventListener('message', event => {
       paperEl.innerHTML = renderedWord + paperEl.innerHTML;
       break;
     case bggl.actions.END:
-      loadEndGamePage(packet.results, packet.players);
+      loadEndGamePage(packet.results);
       break;
     default:
       console.log("[err] Invalid message from server.", packet.action);
@@ -126,16 +128,16 @@ function loadStartingPage() {
  * mid-game.
  */
 function loadWorld(world) {
+  players = world.players;
   lobbyRosterId = world.rosterId;
   if (world.state == bggl.states.IN_PROGRESS)  {
     loadGamePage(world.letters, world.timeElapsed);
   } else {
-    loadPrescreenPage(world.players);
+    loadPrescreenPage();
   }
 }
 
-function loadPrescreenPage(players) {
-  // todo - add a check to verify player list. might be out of date.
+function loadPrescreenPage() {
   pageEl.innerHTML = prescreenTmpl({players});
 
   const startEl = document.getElementById('start');
@@ -164,7 +166,7 @@ function loadGamePage(letters, timeElapsed) {
   }, 1000);
 }
 
-function loadEndGamePage(results, players) {
+function loadEndGamePage(results) {
   window.clearInterval(timerCallbackId);
   paperEl = null;
   wordInputEl = null;
@@ -173,9 +175,11 @@ function loadEndGamePage(results, players) {
   pageEl.innerHTML = endgameTmpl({results});
 
   const closeEl = document.getElementById('close');
-  closeEl.addEventListener('click', () => loadPrescreenPage(players));
+  closeEl.addEventListener('click', () => loadPrescreenPage());
 
-  drawTelemetry(results);
+  if (results.scores.length > 0) {
+    drawTelemetry(results);
+  }
 }
 
 function drawTelemetry(results) {
@@ -225,7 +229,10 @@ function addPlayer(rosterId, nick, boo) {
   }
   updatePlayerCount(1);
   const playersEl = document.getElementById('players');
-  playersEl.innerHTML += playerTmpl({rosterId, nick, boo});
+  if (playersEl) {
+    playersEl.innerHTML += playerTmpl({rosterId, nick, boo});
+  }
+  players.push({rosterId, nick, boo});
 }
 
 function removePlayer(rosterId) {
@@ -234,13 +241,18 @@ function removePlayer(rosterId) {
   }
   updatePlayerCount(-1);
   const playerEl = document.querySelector(`[data-roster="${rosterId}"]`);
-  playerEl.remove();
+  if (playerEl) {
+    playerEl.remove();
+  }
+  players = players.filter(p => p.rosterId != rosterId);
 }
 
 function updatePlayerCount(delta) {
   const numPlayersEl = document.getElementById("numPlayers");
-  const count = parseInt(numPlayersEl.innerHTML, 10);
-  numPlayersEl.innerHTML = count + delta;
+  if (numPlayersEl) {
+    const count = parseInt(numPlayersEl.innerHTML, 10);
+    numPlayersEl.innerHTML = count + delta;
+  }
 }
 
 function initCookieData() {

@@ -14,6 +14,9 @@ const TILES = ["DEXLIR", "TUICOM", "OTTAOW", "ZNRNLH", "POHCAS", "LTYRET",
     "RLVEDY", "TVRHWE", "GEWHNE", "JBOAOB", "TYTDIS", "IENSEU", "UMHQIN",
     "NAEAGE", "FAKPSF", "ESTISO"];
 
+// Mapping from tokens to roster ids (persists across games).
+const rosterIds = {};
+
 // Global state, we only have a single in-memory lobby instance for now.
 const lobby = {
   // State of the lobby.
@@ -37,6 +40,7 @@ const lobby = {
 
   // Map from player token to the data for that user.
   users: {}
+
 };
 
 const server = new https.createServer({
@@ -72,7 +76,7 @@ wss.on('connection', client => {
 });
 
 function handleJoin(client, token, nick, boo = 1) {
-  const rosterId = crypto.randomBytes(16).toString('hex');
+  const rosterId = getInitialRosterId(token);
   if (!nick) {
     nick = "Unnamed Boo";
   }
@@ -81,7 +85,7 @@ function handleJoin(client, token, nick, boo = 1) {
   }
   // todo - handle users with multiple clients.
   client.token = token;
-  lobby.users[token] = {token, nick, boo, rosterId, here: true};
+  lobby.users[token] = {token, nick, boo, here: true};
 
   const world = {
     state: lobby.state,
@@ -94,6 +98,13 @@ function handleJoin(client, token, nick, boo = 1) {
   broadcast({action: bggl.actions.ADD_PLAYER, rosterId, nick, boo});
 }
 
+function getInitialRosterId(token) {
+  if (!rosterIds[token]) {
+    rosterIds[token] = crypto.randomBytes(16).toString('hex');
+  }
+  return rosterIds[token];
+}
+
 /**
  * Converts the lobby users mapping to a client-renderable list of players.
  */
@@ -102,7 +113,7 @@ function toClientPlayers() {
   for (const token in lobby.users) {
     const serverPlayer = lobby.users[token];
     players.push({
-      rosterId: serverPlayer.rosterId,
+      rosterId: rosterIds[token],
       nick: serverPlayer.nick,
       boo: serverPlayer.boo
     });
@@ -120,7 +131,7 @@ function handleLeave(client, token) {
     lobby.users[client.token].here = false;
   } else if (token in lobby.users) {
     // Otherwise, if they haven't already been removed, remove the user.
-    const rosterId = lobby.users[token].rosterId;
+    const rosterId = rosterIds[token];
     broadcast({action: bggl.actions.REMOVE_PLAYER, rosterId});
     delete lobby.users[client.token];
   }
@@ -149,7 +160,6 @@ function startGame(startingClient) {
 function endGame() {
   lobby.state = bggl.states.STOPPED;
   const results = buildGameResults();
-  const players = toClientPlayers();
 
   const playerNickMap = {};
   for (const token in lobby.words) {
@@ -163,7 +173,7 @@ function endGame() {
     }
   }
 
-  broadcast({action: bggl.actions.END, results, players});
+  broadcast({action: bggl.actions.END, results});
 }
 
 
@@ -185,7 +195,7 @@ function buildGameResults() {
     results.scores.push({
       boo: user.boo,
       nick: user.nick,
-      rosterId: user.rosterId,
+      rosterId: rosterIds[token],
       words: wordsWithMetadata,
       points,
     });
@@ -319,7 +329,7 @@ function isReachableWord(word) {
 
 
 function updateTelemetry(token, word) {
-  const rosterId = lobby.users[token].rosterId;
+  const rosterId = rosterIds[token];
   let prevScore;
   if (rosterId in lobby.telemetryMap) {
     const pairs = lobby.telemetryMap[rosterId];
