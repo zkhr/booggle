@@ -143,11 +143,7 @@ function loadPrescreenPage(players) {
 }
 
 function loadGamePage(letters, timeElapsed) {
-  for (let i = 0; i < letters.length; i++) {
-    if (letters[i] == "Q") {
-      letters[i] += "u";
-    }
-  }
+  fixLetters(letters);
   pageEl.innerHTML = gameTmpl({letters});
 
   wordinputEl = document.getElementById('wordinput');
@@ -173,6 +169,7 @@ function loadEndGamePage(results, players) {
   paperEl = null;
   wordInputEl = null;
 
+  fixLetters(results.letters);
   pageEl.innerHTML = endgameTmpl({results});
 
   const closeEl = document.getElementById('close');
@@ -282,4 +279,12 @@ function compileHbs(name) {
   // At some point I should pre-compile these...
   const source = document.getElementById(name).innerHTML
   return Handlebars.compile(source);
+}
+
+function fixLetters(letters) {
+  for (let i = 0; i < letters.length; i++) {
+    if (letters[i] == "Q") {
+      letters[i] += "u";
+    }
+  }
 }
