@@ -8,7 +8,7 @@ const path = require('path');
 const server = require('./server.js');
 
 const app = express();
-app.listen(3000);
+app.listen(3001);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

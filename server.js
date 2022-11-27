@@ -44,8 +44,8 @@ const lobby = {
 };
 
 const server = new https.createServer({
-  cert: fs.readFileSync('/etc/letsencrypt/live/ariblumenthal.com/fullchain.pem'),
-  key: fs.readFileSync('/etc/letsencrypt/live/ariblumenthal.com/privkey.pem')
+  cert: fs.readFileSync('/etc/letsencrypt/live/ari.blumenthal.dev/fullchain.pem'),
+  key: fs.readFileSync('/etc/letsencrypt/live/ari.blumenthal.dev/privkey.pem')
 }).listen(9000);
 const wss = new WebSocket.Server({server});
 wss.on('connection', client => {
