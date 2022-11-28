@@ -156,7 +156,6 @@ function startGame(startingClient) {
   });
 }
 
-
 function endGame() {
   lobby.state = bggl.states.STOPPED;
   const results = buildGameResults();
@@ -175,7 +174,6 @@ function endGame() {
 
   broadcast({action: bggl.actions.END, results});
 }
-
 
 function buildGameResults() {
   const results = {
@@ -214,7 +212,6 @@ function scorePoints() {
   return pointsList.sort((a,b) => b[1] - a[1]);
 }
 
-
 function getPointsForWord(word) {
   if (word.length == 3 || word.length == 4) {
     return 1;
@@ -228,7 +225,6 @@ function getPointsForWord(word) {
     return 11;
   }
 }
-
 
 function handleWord(client, token, word) {
   if (lobby.state == bggl.states.STOPPED) {
@@ -253,17 +249,14 @@ function handleWord(client, token, word) {
   send(client, {action: bggl.actions.SEND_WORD, valid, word});
 }
 
-
 function isValidWord(word, token) {
   return word.length >= 3 && lobby.words[token].indexOf(word) < 0 &&
       isDictionaryWord(word) && isReachableWord(word);
 }
 
-
 function isDictionaryWord(word) {
   return ENGLISH_WORDS[word];
 }
-
 
 function isReachableWord(word) {
   word = word.toUpperCase();
@@ -327,7 +320,6 @@ function isReachableWord(word) {
   return true;
 }
 
-
 function updateTelemetry(token, word) {
   const rosterId = rosterIds[token];
   let prevScore;
@@ -343,18 +335,15 @@ function updateTelemetry(token, word) {
   lobby.telemetryMap[rosterId].push([timeElapsed, currScore]);
 }
 
-
 function broadcast(packet) {
   wss.clients.forEach(client => {
     send(client, packet);
   });
 }
 
-
 function send(client, packet) {
   client.send(JSON.stringify(packet));
 }
-
 
 function getRandomLetters() {
   const tiles = Array.from(TILES);

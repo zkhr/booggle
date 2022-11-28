@@ -1,1 +1,5 @@
 node_modules/
+ospd.txt
+public/common/handlebars-v4.0.12.js
+public/stylesheets/style.css
+public/stylesheets/style.css.map
