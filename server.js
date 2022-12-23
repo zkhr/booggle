@@ -4,15 +4,30 @@ const fs = require("fs");
 
 const bggl = require("./public/js/common/bggl.js");
 
-const WebSocket = require('ws');
+const WebSocket = require("ws");
 
 const BOARD_SIZE = 4;
 
 const ENGLISH_WORDS = loadDictionary();
 
-const TILES = ["DEXLIR", "TUICOM", "OTTAOW", "ZNRNLH", "POHCAS", "LTYRET",
-    "RLVEDY", "TVRHWE", "GEWHNE", "JBOAOB", "TYTDIS", "IENSEU", "UMHQIN",
-    "NAEAGE", "FAKPSF", "ESTISO"];
+const TILES = [
+  "DEXLIR",
+  "TUICOM",
+  "OTTAOW",
+  "ZNRNLH",
+  "POHCAS",
+  "LTYRET",
+  "RLVEDY",
+  "TVRHWE",
+  "GEWHNE",
+  "JBOAOB",
+  "TYTDIS",
+  "IENSEU",
+  "UMHQIN",
+  "NAEAGE",
+  "FAKPSF",
+  "ESTISO",
+];
 
 // Mapping from tokens to roster ids (persists across games).
 const rosterIds = {};
@@ -39,17 +54,18 @@ const lobby = {
   scoringMap: {},
 
   // Map from player token to the data for that user.
-  users: {}
-
+  users: {},
 };
 
 const server = new https.createServer({
-  cert: fs.readFileSync('/etc/letsencrypt/live/ari.blumenthal.dev/fullchain.pem'),
-  key: fs.readFileSync('/etc/letsencrypt/live/ari.blumenthal.dev/privkey.pem')
+  cert: fs.readFileSync(
+    "/etc/letsencrypt/live/ari.blumenthal.dev/fullchain.pem"
+  ),
+  key: fs.readFileSync("/etc/letsencrypt/live/ari.blumenthal.dev/privkey.pem"),
 }).listen(9000);
-const wss = new WebSocket.Server({server});
-wss.on('connection', client => {
-  client.on('message', data => {
+const wss = new WebSocket.Server({ server });
+wss.on("connection", (client) => {
+  client.on("message", (data) => {
     const packet = JSON.parse(data);
     switch (packet.action) {
       case bggl.actions.JOIN:
@@ -65,12 +81,12 @@ wss.on('connection', client => {
         console.log("[err] Unknown action:", packet.action);
     }
   });
-  client.on('close', () => handleLeave(client, client.token));
+  client.on("close", () => handleLeave(client, client.token));
 
   if (lobby.state == bggl.states.IN_PROGRESS) {
     send(client, {
       action: bggl.actions.START,
-      letters: lobby.letters
+      letters: lobby.letters,
     });
   }
 });
@@ -81,26 +97,26 @@ function handleJoin(client, token, nick, boo = 1) {
     nick = "Unnamed Boo";
   }
   if (!token) {
-    token = crypto.randomBytes(16).toString('hex');
+    token = crypto.randomBytes(16).toString("hex");
   }
   // todo - handle users with multiple clients.
   client.token = token;
-  lobby.users[token] = {token, nick, boo, here: true};
+  lobby.users[token] = { token, nick, boo, here: true };
 
   const world = {
     state: lobby.state,
     players: toClientPlayers(),
     letters: lobby.letters,
     timeElapsed: Date.now() - lobby.startTime,
-    rosterId
+    rosterId,
   };
-  send(client, {action: bggl.actions.JOIN, token, nick, boo, world});
-  broadcast({action: bggl.actions.ADD_PLAYER, rosterId, nick, boo});
+  send(client, { action: bggl.actions.JOIN, token, nick, boo, world });
+  broadcast({ action: bggl.actions.ADD_PLAYER, rosterId, nick, boo });
 }
 
 function getInitialRosterId(token) {
   if (!rosterIds[token]) {
-    rosterIds[token] = crypto.randomBytes(16).toString('hex');
+    rosterIds[token] = crypto.randomBytes(16).toString("hex");
   }
   return rosterIds[token];
 }
@@ -115,7 +131,7 @@ function toClientPlayers() {
     players.push({
       rosterId: rosterIds[token],
       nick: serverPlayer.nick,
-      boo: serverPlayer.boo
+      boo: serverPlayer.boo,
     });
   }
   return players;
@@ -132,14 +148,14 @@ function handleLeave(client, token) {
   } else if (token in lobby.users) {
     // Otherwise, if they haven't already been removed, remove the user.
     const rosterId = rosterIds[token];
-    broadcast({action: bggl.actions.REMOVE_PLAYER, rosterId});
+    broadcast({ action: bggl.actions.REMOVE_PLAYER, rosterId });
     delete lobby.users[client.token];
   }
 }
 
 function startGame(startingClient) {
   if (lobby.state == bggl.states.IN_PROGRESS) {
-    send(startingClient, {response: 'nope'});
+    send(startingClient, { response: "nope" });
     return;
   }
 
@@ -172,7 +188,7 @@ function endGame() {
     }
   }
 
-  broadcast({action: bggl.actions.END, results});
+  broadcast({ action: bggl.actions.END, results });
 }
 
 function buildGameResults() {
@@ -180,7 +196,7 @@ function buildGameResults() {
     letters: lobby.letters,
     telemetryMap: lobby.telemetryMap,
     scores: [],
-    cards: []
+    cards: [],
   };
   const pointsList = scorePoints();
   for (const [token, points] of pointsList) {
@@ -188,7 +204,7 @@ function buildGameResults() {
     const words = lobby.words[token].sort();
     const wordsWithMetadata = [];
     for (const word of words) {
-      wordsWithMetadata.push({word, unique: lobby.scoringMap[word] == 1});
+      wordsWithMetadata.push({ word, unique: lobby.scoringMap[word] == 1 });
     }
     results.scores.push({
       boo: user.boo,
@@ -209,7 +225,7 @@ function scorePoints() {
     }, 0);
     pointsList.push([token, points]);
   }
-  return pointsList.sort((a,b) => b[1] - a[1]);
+  return pointsList.sort((a, b) => b[1] - a[1]);
 }
 
 function getPointsForWord(word) {
@@ -228,10 +244,10 @@ function getPointsForWord(word) {
 
 function handleWord(client, token, word) {
   if (lobby.state == bggl.states.STOPPED) {
-    send(client, {response: 'nope, the game over is over.'});
+    send(client, { response: "nope, the game over is over." });
     return;
   } else if (!lobby.users[token]) {
-    send(client, {response: 'nope, you need to join the game first.'});
+    send(client, { response: "nope, you need to join the game first." });
     return;
   }
 
@@ -246,12 +262,16 @@ function handleWord(client, token, word) {
     lobby.scoringMap[word] = lobby.scoringMap[word] + 1 || 1;
     updateTelemetry(token, word);
   }
-  send(client, {action: bggl.actions.SEND_WORD, valid, word});
+  send(client, { action: bggl.actions.SEND_WORD, valid, word });
 }
 
 function isValidWord(word, token) {
-  return word.length >= 3 && lobby.words[token].indexOf(word) < 0 &&
-      isDictionaryWord(word) && isReachableWord(word);
+  return (
+    word.length >= 3 &&
+    lobby.words[token].indexOf(word) < 0 &&
+    isDictionaryWord(word) &&
+    isReachableWord(word)
+  );
 }
 
 function isDictionaryWord(word) {
@@ -264,22 +284,22 @@ function isReachableWord(word) {
   let prevLetter = word[0];
   lobby.letters.forEach((letter, index) => {
     if (letter == word[0]) {
-      possiblePaths.push([index])
+      possiblePaths.push([index]);
     }
   });
   for (let i = 1; i < word.length; i++) {
-    if (prevLetter == 'Q') {
+    if (prevLetter == "Q") {
       prevLetter = word[i];
       continue;
     }
     const newPaths = [];
-    possiblePaths.forEach(path => {
+    possiblePaths.forEach((path) => {
       const lastIndex = path[path.length - 1];
       const xCoord = lastIndex % 4;
       const yCoord = Math.floor(lastIndex / 4);
       const validIndices = [];
       if (xCoord > 0) {
-        validIndices.push(lastIndex - 1)
+        validIndices.push(lastIndex - 1);
       }
       if (xCoord > 0 && yCoord > 0) {
         validIndices.push(lastIndex - BOARD_SIZE - 1);
@@ -288,7 +308,7 @@ function isReachableWord(word) {
         validIndices.push(lastIndex + BOARD_SIZE - 1);
       }
       if (xCoord < BOARD_SIZE - 1) {
-        validIndices.push(lastIndex + 1)
+        validIndices.push(lastIndex + 1);
       }
       if (xCoord < BOARD_SIZE - 1 && yCoord > 0) {
         validIndices.push(lastIndex - BOARD_SIZE + 1);
@@ -302,9 +322,13 @@ function isReachableWord(word) {
       if (yCoord < BOARD_SIZE - 1) {
         validIndices.push(lastIndex + BOARD_SIZE);
       }
-      validIndices.forEach(index => {
-        if (index >= 0 && index < BOARD_SIZE * BOARD_SIZE &&
-            lobby.letters[index] == word[i] && path.indexOf(index) < 0) {
+      validIndices.forEach((index) => {
+        if (
+          index >= 0 &&
+          index < BOARD_SIZE * BOARD_SIZE &&
+          lobby.letters[index] == word[i] &&
+          path.indexOf(index) < 0
+        ) {
           const newPath = Array.from(path);
           newPath.push(index);
           newPaths.push(newPath);
@@ -336,7 +360,7 @@ function updateTelemetry(token, word) {
 }
 
 function broadcast(packet) {
-  wss.clients.forEach(client => {
+  wss.clients.forEach((client) => {
     send(client, packet);
   });
 }
@@ -359,10 +383,10 @@ function getRandomLetters() {
 
 function loadDictionary() {
   process.stdout.write("Loading dictionary... ");
-  const data = fs.readFileSync('/w/sandbox/booggle/ospd.txt', 'utf8');
-  const words = data.split('\n');
+  const data = fs.readFileSync("/w/sandbox/booggle/dictionary.txt", "utf8");
+  const words = data.split("\n");
   const wordMap = words.reduce((map, word) => {
-    map[word] = true
+    map[word] = true;
     return map;
   }, {});
   console.log("Done");

@@ -1,5 +1,5 @@
 node_modules/
-ospd.txt
-public/js/handlebars-v4.0.12.js
+dictionary.txt
+public/js/handlebars-*
 public/stylesheets/style.css
 public/stylesheets/style.css.map
