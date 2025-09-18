@@ -1,7 +1,0 @@
-booggle is a fictional ghost inspired web implementation of a popular word game
-involving a 4x4 grid of letters.
-
-The latest handlebars JS can be fetched from https://handlebarsjs.com.
-
-dictionary.txt has one word per line in lowercase and can be fetched from
-various places. For example, I am using the NWL 2020 word list.

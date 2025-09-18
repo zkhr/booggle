@@ -1,5 +1,3 @@
+api/dictionary.txt
+dist/
 node_modules/
-dictionary.txt
-public/js/handlebars-*
-public/stylesheets/style.css
-public/stylesheets/style.css.map
