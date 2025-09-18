@@ -35,13 +35,12 @@ const lobby = new Lobby(dictionary);
 
 Deno.serve({
   port: 9001,
-  // do not submit
-  // cert: Deno.readTextFileSync(
-  //   "/etc/letsencrypt/live/ari.blumenthal.dev/fullchain.pem",
-  // ),
-  // key: Deno.readTextFileSync(
-  //   "/etc/letsencrypt/live/ari.blumenthal.dev/privkey.pem",
-  // ),
+  cert: Deno.readTextFileSync(
+    "/etc/letsencrypt/live/ari.blumenthal.dev/fullchain.pem",
+  ),
+  key: Deno.readTextFileSync(
+    "/etc/letsencrypt/live/ari.blumenthal.dev/privkey.pem",
+  ),
 }, (req) => {
   if (req.headers.get("upgrade") != "websocket") {
     return new Response(null, { status: 426 });

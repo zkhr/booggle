@@ -83,9 +83,7 @@ function App() {
       setUser,
       setGameState,
     );
-    // do not submit
-    // socket.current = new WebSocket("wss://ari.blumenthal.dev:9001");
-    socket.current = new WebSocket("ws://localhost:9001");
+    socket.current = new WebSocket("wss://ari.blumenthal.dev:9001");
     socket.current.addEventListener("message", (event) => {
       const packet = JSON.parse(event.data) as ResponsePacket;
       router.route(packet);

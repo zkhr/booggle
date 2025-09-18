@@ -7,6 +7,7 @@ implementation of a popular word game involving a 4x4 grid of letters.
 
 Let's walk through the key files and folders in this project:
 
+```
 booggle/
 ├── api/                         # Backend API Server
 │   ├── dictionary.ts            # Loads the dictionary and checks word validity
@@ -40,6 +41,7 @@ booggle/
 ├── tsconfig.json                # TypeScript compiler options
 ├── tsconfig.node.json           # TypeScript compiler options (for Vite config)
 └── vite.config.ts               # Vite (build tool & dev server) configuration
+```
 
 ## Prerequisites
 
