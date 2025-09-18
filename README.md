@@ -47,9 +47,32 @@ booggle/
 
 booggle is run with the [Deno](https://docs.deno.com) JS runtime.
 
-You'll also need to create a dictionary.txt file and place it in the `api/`
-directory. The format is one word per line in lowercase. For example, I'm using
-the NWL 2020 word list.
+### dictionary
+
+Create a `dictionary.txt` file and place it in the `api/` directory. The format
+is one word per line in lowercase. For example, I'm using the NWL 2020 word
+list.
+
+### env variables
+
+Create an `.env` file to populate several environmental variables. For example,
+in local development I have:
+
+```sh
+DEV_FE_PORT=9000
+API_PORT=9001
+VITE_WEBSOCKET_URL="ws://localhost:9001"
+```
+
+and in prod I use:
+
+```sh
+DEV_FE_PORT=9000
+API_PORT=9001
+VITE_WEBSOCKET_URL="wss://ari.blumenthal.dev:9001"
+SSL_CERT_FILENAME="/path/to/fullchain.pem"
+SSL_KEY_FILENAME="/path/to/privkey.pem"
+```
 
 ## Testing and development
 

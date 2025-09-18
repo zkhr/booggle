@@ -83,7 +83,13 @@ function App() {
       setUser,
       setGameState,
     );
-    socket.current = new WebSocket("wss://ari.blumenthal.dev:9001");
+    const socketUrl = import.meta.env.VITE_WEBSOCKET_URL;
+    if (!socketUrl) {
+      return console.error(
+        "Missing VITE_WEBSOCKET_URL in booggle env config. Please review https://github.com/zkhr/booggle#prerequisites.",
+      );
+    }
+    socket.current = new WebSocket(socketUrl);
     socket.current.addEventListener("message", (event) => {
       const packet = JSON.parse(event.data) as ResponsePacket;
       router.route(packet);

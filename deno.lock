@@ -1,6 +1,8 @@
 {
   "version": "5",
   "specifiers": {
+    "jsr:@std/dotenv@*": "0.225.5",
+    "jsr:@std/dotenv@~0.225.5": "0.225.5",
     "npm:@deno/vite-plugin@^1.0.5": "1.0.5_vite@7.1.6__picomatch@4.0.3_@types+node@24.2.0",
     "npm:@eslint/js@^9.33.0": "9.35.0",
     "npm:@types/node@*": "24.2.0",
@@ -18,6 +20,11 @@
     "npm:use-immer@0.11": "0.11.0_immer@10.1.3_react@19.1.1",
     "npm:vite@*": "7.1.6_picomatch@4.0.3_@types+node@24.2.0",
     "npm:vite@^7.1.2": "7.1.6_picomatch@4.0.3_@types+node@24.2.0"
+  },
+  "jsr": {
+    "@std/dotenv@0.225.5": {
+      "integrity": "9ce6f9d0ec3311f74a32535aa1b8c62ed88b1ab91b7f0815797d77a6f60c922f"
+    }
   },
   "npm": {
     "@babel/code-frame@7.27.1": {
@@ -1430,6 +1437,9 @@
     }
   },
   "workspace": {
+    "dependencies": [
+      "jsr:@std/dotenv@~0.225.5"
+    ],
     "packageJson": {
       "dependencies": [
         "npm:@deno/vite-plugin@^1.0.5",

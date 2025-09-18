@@ -1,3 +1,4 @@
+import "jsr:@std/dotenv/load";
 import { randomBytes } from "node:crypto";
 import Dictionary from "./dictionary.ts";
 import Lobby from "./lobby.ts";
@@ -33,39 +34,34 @@ const dictionary = new Dictionary();
 // for all users.
 const lobby = new Lobby(dictionary);
 
-Deno.serve({
-  port: 9001,
-  cert: Deno.readTextFileSync(
-    "/etc/letsencrypt/live/ari.blumenthal.dev/fullchain.pem",
-  ),
-  key: Deno.readTextFileSync(
-    "/etc/letsencrypt/live/ari.blumenthal.dev/privkey.pem",
-  ),
-}, (req) => {
-  if (req.headers.get("upgrade") != "websocket") {
-    return new Response(null, { status: 426 });
-  }
-
-  const { socket, response } = Deno.upgradeWebSocket(req);
-  let activeClient: Client | null = null;
-
-  socket.addEventListener("message", (event) => {
-    const packet = JSON.parse(event.data) as RequestPacket;
-    switch (packet.action) {
-      case "join":
-        activeClient = handleJoin(socket, packet as JoinRequest);
-        break;
-      case "start":
-        return startGame(activeClient);
-      case "sendword":
-        return handleWord(activeClient, packet.token, packet.word);
+Deno.serve(
+  buildServerOptionsFromEnv(),
+  (req) => {
+    if (req.headers.get("upgrade") != "websocket") {
+      return new Response(null, { status: 426 });
     }
-  });
 
-  socket.addEventListener("close", () => handleLeave(activeClient));
+    const { socket, response } = Deno.upgradeWebSocket(req);
+    let activeClient: Client | null = null;
 
-  return response;
-});
+    socket.addEventListener("message", (event) => {
+      const packet = JSON.parse(event.data) as RequestPacket;
+      switch (packet.action) {
+        case "join":
+          activeClient = handleJoin(socket, packet as JoinRequest);
+          break;
+        case "start":
+          return startGame(activeClient);
+        case "sendword":
+          return handleWord(activeClient, packet.token, packet.word);
+      }
+    });
+
+    socket.addEventListener("close", () => handleLeave(activeClient));
+
+    return response;
+  },
+);
 
 function handleJoin(socket: WebSocket, request: JoinRequest): Client {
   const existingClient = clients.get(request.token);
@@ -209,4 +205,24 @@ function send(client: Client, packet: ResponsePacket) {
 function log(message: string, ...cssStrings: string[]) {
   const now = new Date().toISOString();
   console.log(`[${now}] ${message}`, ...cssStrings);
+}
+
+function buildServerOptionsFromEnv():
+  | Deno.ServeTcpOptions
+  | (Deno.ServeTcpOptions & Deno.TlsCertifiedKeyPem) {
+  const port = parseInt(Deno.env.get("API_PORT") || "");
+  if (!port) {
+    throw new Error("Missing API_PORT flag.");
+  }
+
+  const sslCertFilename = Deno.env.get("SSL_CERT_FILENAME");
+  const sslKeyFilename = Deno.env.get("SSL_KEY_FILENAME");
+  if (sslCertFilename && sslKeyFilename) {
+    return {
+      port,
+      cert: Deno.readTextFileSync(sslCertFilename),
+      key: Deno.readTextFileSync(sslKeyFilename),
+    };
+  }
+  return { port };
 }
