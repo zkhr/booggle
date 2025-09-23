@@ -165,7 +165,7 @@ function App() {
 
   function handleWord(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter" && e.target instanceof HTMLInputElement) {
-      const word = e.target.value;
+      const word = e.target.value.trim();
       e.target.value = "";
       send({ action: "sendword", token: user.token, word });
     }

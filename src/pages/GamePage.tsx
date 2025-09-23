@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Board from "../Board.tsx";
 import type { Word } from "../../common/types.ts";
-import { GAME_LENGTH_MS } from "../../common/constants.ts"
+import { GAME_LENGTH_MS } from "../../common/constants.ts";
 import "./GamePage.css";
 
 interface GamePageProps {
@@ -43,6 +43,10 @@ function LobbyPage(
           className="textinput"
           type="text"
           placeholder="add words"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
           onKeyUp={onWordKeyUp}
         />
         <div className="paper">{renderedWords}</div>

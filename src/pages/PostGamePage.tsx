@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Board from "../Board.tsx";
 import type { EndGameResults, Score, ScoredWord } from "../../common/types.ts";
 import { GAME_LENGTH_MS } from "../../common/constants.ts";
-import { Boo, toBooColor, toBooSecondaryColor } from "../Boo.tsx";
+import { Boo, toBooColor } from "../Boo.tsx";
 import "./PostGamePage.css";
 
 interface PostGamePageProps {
