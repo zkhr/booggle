@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Board from "../Board.tsx";
+import Board from "../components/Board.tsx";
 import type { Word } from "../../common/types.ts";
 import { GAME_LENGTH_MS } from "../../common/constants.ts";
 import "./GamePage.css";

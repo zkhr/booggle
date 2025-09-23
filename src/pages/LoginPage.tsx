@@ -1,6 +1,6 @@
 import type React from "react";
 import type { User } from "../../common/types.ts";
-import BooPicker from "../BooPicker.tsx";
+import BooPicker from "../components/BooPicker.tsx";
 import "./LoginPage.css";
 
 interface LoginPageProps {

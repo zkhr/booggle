@@ -1,3 +1,8 @@
+.game .board {
+  width: 168px;
+  margin: 20px 8px 8px;
+}
+
 .game .textinput {
   color: #212121;
   margin-left: 8px;

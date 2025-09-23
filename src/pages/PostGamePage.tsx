@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import Board from "../Board.tsx";
+import Board from "../components/Board.tsx";
 import type { EndGameResults, Score, ScoredWord } from "../../common/types.ts";
 import { GAME_LENGTH_MS } from "../../common/constants.ts";
-import { Boo, toBooColor } from "../Boo.tsx";
+import { Boo, toBooColor } from "../components/Boo.tsx";
 import "./PostGamePage.css";
 
 interface PostGamePageProps {
@@ -22,21 +22,21 @@ function PostGamePage({ results, onClose }: PostGamePageProps) {
   return (
     <div className="endgame page">
       <div className="title">{winner.nick} wins!</div>
-      <div className="ranks">
+      <div className="entries">
         {renderedScores}
-      </div>
-      <div className="cards">
         {renderedCards}
-      </div>
-      <div className="multirow">
-        <div id="canvascard" className="card canvascard">
-          <canvas id="canvas" height="168"></canvas>
+        <div className="multirow">
+          <div id="canvascard" className="card canvascard">
+            <canvas id="canvas" height="168"></canvas>
+          </div>
+          <Board letters={results.letters} />
         </div>
-        <Board letters={results.letters} />
+        <div>
+          <button className="button" onClick={onClose} type="button">
+            Close results
+          </button>
+        </div>
       </div>
-      <button className="button" onClick={onClose} type="button">
-        Close results
-      </button>
     </div>
   );
 }
@@ -56,7 +56,7 @@ function renderScoreCard(score: Score) {
   return (
     <div className="card" key={score.rosterId}>
       <div className="toprow" style={{ "background": toBooColor(score.color) }}>
-        <Boo color={score.color} size={30} />
+        <Boo color={score.color} size={24} />
         <div className="nick">{score.nick}</div>
       </div>
       <div className="scored-words">

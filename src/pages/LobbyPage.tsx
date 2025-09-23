@@ -1,5 +1,5 @@
 import type { Player } from "../../common/types.ts";
-import { Boo } from "../Boo.tsx";
+import { Boo } from "../components/Boo.tsx";
 import "./LobbyPage.css";
 
 interface LobbyPageProps {

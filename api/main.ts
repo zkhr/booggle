@@ -64,7 +64,8 @@ Deno.serve(
 );
 
 function handleJoin(socket: WebSocket, request: JoinRequest): Client {
-  const existingClient = clients.get(request.token);
+  const token = request.token || randomBytes(16).toString("hex");
+  const existingClient = clients.get(token);
   const rosterId = existingClient
     ? existingClient.rosterId
     : randomBytes(16).toString("hex");
@@ -72,11 +73,11 @@ function handleJoin(socket: WebSocket, request: JoinRequest): Client {
   const client = {
     socket,
     rosterId,
-    token: request.token || randomBytes(16).toString("hex"),
+    token,
     nick: request.nick || "Unnamed Boo",
     color: request.color || 0,
   };
-  clients.set(request.token, client);
+  clients.set(token, client);
 
   if (existingClient && existingClient.nick !== client.nick) {
     log(`${existingClient.nick} is now known as ${client.nick}`);

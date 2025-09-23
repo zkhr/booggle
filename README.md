@@ -9,38 +9,42 @@ Let's walk through the key files and folders in this project:
 
 ```
 booggle/
-├── api/                         # Backend API Server
-│   ├── dictionary.ts            # Loads the dictionary and checks word validity
-│   ├── dictionary.txt           # English dictionary (one word per line)
-│   ├── game.ts                  # Contains logic for handling game behavior
-│   ├── letters.ts               # Generates board state for a new game
-│   ├── lobby.ts                 # Tracks game state
-│   ├── main.ts                  # Entry point to the API server
+├── api/                          # Backend API Server
+│   ├── dictionary.ts             # Loads the dictionary and checks word validity
+│   ├── dictionary.txt            # English dictionary (one word per line)
+│   ├── game.ts                   # Contains logic for handling game behavior
+│   ├── letters.ts                # Generates board state for a new game
+│   ├── lobby.ts                  # Tracks game state
+│   ├── main.ts                   # Entry point to the API server
 ├── common/
-│   ├── constants.ts             # Defines shared constants (for API and FE)
-│   ├── types.ts                 # Defines shared types (for API and FE)
-├── dist/                        # Generated static content when building the FE 
-├── src/                         # React frontend (FE)
-│   ├── main.tsx                 # React app entry point
-│   ├── App.tsx                  # Main app with routing
-│   ├── App.css                  # Global app styles
-│   ├── Board.tsx                # Shared 'Board' component for the game
-│   ├── ResponsePacketRouter.ts  # Handles websocket responses from the API 
-│   └── pages/
-│       ├── GamePage.tsx         # Game page when playing booggle
-│       ├── LobbyPage.tsx        # Lobby page after the user has logged in
-│       ├── LoginPage.tsx        # Login page when the user first hits the app
-│       └── PostGamePage.tsx     # Game results after the game has completed
-├── .gitignore                   # Files that aren't tracked by git
-├── deno.json                    # Deno (runtime & package mgr) config and tasks
-├── deno.lock                    # Deno lock file for checking module integrity
-├── eslint.config.js             # ESLint (static analyzer for TS) config
-├── index.html                   # Root html which loads the React frontend
-├── package.json                 # npm dependencies for Vite
-├── tsconfig.app.json            # TypeScript compiler options (for FE)
-├── tsconfig.json                # TypeScript compiler options
-├── tsconfig.node.json           # TypeScript compiler options (for Vite config)
-└── vite.config.ts               # Vite (build tool & dev server) configuration
+│   ├── constants.ts              # Defines shared constants (for API and FE)
+│   ├── types.ts                  # Defines shared types (for API and FE)
+├── dist/                         # Generated static content when building the FE 
+├── src/                          # React frontend (FE)
+│   ├── components/
+│   │  ├── Board.{tsx,css}        # Renders the game board
+│   │  ├── Boo.tsx                # Renders a Boo icon
+│   │  └── BooPicker.{tsx,css}    # Renders the Boo color selector.
+│   ├── pages/
+│   │  ├── GamePage.{tsx,css}     # Game page when playing booggle
+│   │  ├── LobbyPage.{tsx,css}    # Lobby page after the user has logged in
+│   │  ├── LoginPage.{tsx,css}    # Login page when the user first hits the app
+│   │  └── PostGamePage.{tsx,css} # Game results after the game has completed
+│   ├── static/                   # Additional static content to be served by the FE
+│   ├── App.tsx                   # Main app with routing
+│   ├── App.css                   # Global app styles
+│   ├── main.tsx                  # React app entry point
+│   └── ResponsePacketRouter.ts   # Handles websocket responses from the API 
+├── .gitignore                    # Files that aren't tracked by git
+├── deno.json                     # Deno (runtime & package mgr) config and tasks
+├── deno.lock                     # Deno lock file for checking module integrity
+├── eslint.config.js              # ESLint (static analyzer for TS) config
+├── index.html                    # Root html which loads the React frontend
+├── package.json                  # npm dependencies for Vite
+├── tsconfig.app.json             # TypeScript compiler options (for FE)
+├── tsconfig.json                 # TypeScript compiler options
+├── tsconfig.node.json            # TypeScript compiler options (for Vite config)
+└── vite.config.ts                # Vite (build tool & dev server) configuration
 ```
 
 ## Prerequisites

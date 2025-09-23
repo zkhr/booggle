@@ -15,7 +15,7 @@ import type {
   World,
 } from "../common/types.ts";
 import ResponsePacketRouter from "./ResponsePacketRouter.ts";
-import { toBooColor, toBooSecondaryColor } from "./Boo.tsx";
+import { toBooColor, toBooSecondaryColor } from "./components/Boo.tsx";
 
 function App() {
   const socket = useRef<WebSocket | null>(null);
