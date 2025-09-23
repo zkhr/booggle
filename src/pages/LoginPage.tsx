@@ -33,7 +33,7 @@ function LoginPage(
       </div>
       <div className="section">
         <button className="button" onClick={onJoin} type="button">
-          Join
+          Join game
         </button>
       </div>
     </div>

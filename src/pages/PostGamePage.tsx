@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Board from "../Board.tsx";
 import type { EndGameResults, Score, ScoredWord } from "../../common/types.ts";
 import { GAME_LENGTH_MS } from "../../common/constants.ts";
-import { Boo, toBooColor } from "../Boo.tsx";
+import { Boo, toBooColor, toBooSecondaryColor } from "../Boo.tsx";
 import "./PostGamePage.css";
 
 interface PostGamePageProps {
@@ -11,7 +11,7 @@ interface PostGamePageProps {
 }
 
 function PostGamePage({ results, onClose }: PostGamePageProps) {
-  const winner = results.scores[0]?.nick || "";
+  const winner = results.scores[0];
   const renderedScores = results.scores.map((s) => renderScore(s)).concat();
   const renderedCards = results.scores.map((s) => renderScoreCard(s)).concat();
 
@@ -21,18 +21,22 @@ function PostGamePage({ results, onClose }: PostGamePageProps) {
 
   return (
     <div className="endgame page">
-      <div className="title">
-        <span className="highlight">{winner}</span> Wins!
+      <div className="title">{winner.nick} wins!</div>
+      <div className="ranks">
+        {renderedScores}
       </div>
-      {renderedScores}
-      {renderedCards}
+      <div className="cards">
+        {renderedCards}
+      </div>
       <div className="multirow">
         <div id="canvascard" className="card canvascard">
           <canvas id="canvas" height="168"></canvas>
         </div>
         <Board letters={results.letters} />
       </div>
-      <button className="button" onClick={onClose} type="button">Close</button>
+      <button className="button" onClick={onClose} type="button">
+        Close results
+      </button>
     </div>
   );
 }
@@ -40,7 +44,7 @@ function PostGamePage({ results, onClose }: PostGamePageProps) {
 function renderScore(score: Score) {
   return (
     <div className="rank" key={score.rosterId}>
-      <Boo color={score.color} size={40} />
+      <Boo color={score.color} size={30} />
       <div className="nick">{score.nick}</div>
       <div className="points">{score.points} pts</div>
     </div>
@@ -51,8 +55,8 @@ function renderScoreCard(score: Score) {
   const renderedWords = score.words.map((w, i) => renderWord(w, i)).concat();
   return (
     <div className="card" key={score.rosterId}>
-      <div className="toprow">
-        <Boo color={score.color} size={40} />
+      <div className="toprow" style={{ "background": toBooColor(score.color) }}>
+        <Boo color={score.color} size={30} />
         <div className="nick">{score.nick}</div>
       </div>
       <div className="scored-words">

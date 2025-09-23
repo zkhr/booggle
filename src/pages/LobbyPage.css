@@ -1,8 +1,15 @@
 .players {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   padding: 12px 0;
 }
 
 .player {
   align-items: center;
   display: flex;
+}
+
+.lobby .button {
+  margin-top: 12px;
 }

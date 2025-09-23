@@ -4,11 +4,9 @@
 }
 
 .cell {
-  background-color: #fafafa;
+  background-color: #ffffffcc;
   color: rgba(0, 0, 0, 0.87);
-  border: none;
-  border-radius: 2px;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  border-radius: 4px;
   display: inline-block;
   font-family: "Rubik";
   font-size: 28px;

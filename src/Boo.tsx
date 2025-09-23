@@ -37,3 +37,7 @@ export function Boo({ color, size }: BooProps) {
 export function toBooColor(offset: number | undefined) {
   return `oklch(0.7 0.1 ${offset ?? 0})`;
 }
+
+export function toBooSecondaryColor(offset: number | undefined) {
+  return `oklch(0.9 0.05 ${offset ?? 0})`;
+}

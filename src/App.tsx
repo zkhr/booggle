@@ -15,6 +15,7 @@ import type {
   World,
 } from "../common/types.ts";
 import ResponsePacketRouter from "./ResponsePacketRouter.ts";
+import { toBooColor, toBooSecondaryColor } from "./Boo.tsx";
 
 function App() {
   const socket = useRef<WebSocket | null>(null);
@@ -44,6 +45,12 @@ function App() {
   // this issue, please send me a message.
   const gameStateRef = useRef<GameState>(gameState);
   const worldRef = useRef<World>(world);
+
+  useEffect(() => {
+    const style = document.documentElement.style;
+    style.setProperty("--primary-color", toBooColor(user.color));
+    style.setProperty("--secondary-color", toBooSecondaryColor(user.color));
+  }, [user]);
 
   /** Loads the initial player data from the user's cookies. */
   function loadUser(): User {
@@ -132,7 +139,12 @@ function App() {
   }
 
   function handleJoinButton() {
-    send({ action: "join", token: user.token, nick: user.nick, color: user.color});
+    send({
+      action: "join",
+      token: user.token,
+      nick: user.nick,
+      color: user.color,
+    });
   }
 
   function handleNickChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -144,7 +156,7 @@ function App() {
   function handleColorChange(e: React.ChangeEvent<HTMLInputElement>) {
     setUser((draft) => {
       draft.color = Math.floor(parseInt(e.target.value));
-    })
+    });
   }
 
   function handleStartButton() {

@@ -1,12 +1,11 @@
 .game .textinput {
-  background: #fafafa;
+  color: #212121;
   margin-left: 8px;
   width: 152px;
 }
 
 .timer {
-  background-color: #aaa;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  background-color: #ffffffcc;
   height: 12px;
   position: absolute;
   top: 0;
@@ -15,32 +14,30 @@
 }
 
 .timer .timerInner {
-  background: #1565c0;
+  background: var(--primary-color);
   height: 100%;
   transition: width 1s linear;
   width: 0;
 }
 
 .paper {
-  position: absolute;
-  left: 184px;
-  top: 0;
-  min-height: 28px;
-  background-color: #fafafa;
-  border: none;
-  border-radius: 2px;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  background-color: #ffffffcc;
+  border-radius: 0 0 4px 4px;
   font-size: 16px;
+  left: 184px;
   line-height: 18px;
-  padding: 20px 8px 8px;
+  min-height: 28px;
   overflow: hidden;
+  padding: 8px;
+  position: absolute;
+  top: 12px;
   width: 134px;
 }
 
 .word.valid {
-  color: #4caf50;
+  color: #484848;
 }
 
 .word:not(.valid) {
-  color: #f44336;
+  color: #e04f44;
 }

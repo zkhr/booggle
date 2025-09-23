@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import "./BooPicker.css";
-import { CSSProperties } from "react";
 import {toBooColor} from './Boo.tsx';
 
 interface BooPickerProps {
@@ -44,7 +43,6 @@ function BooPicker({ color, onColorChange }: BooPickerProps) {
           max="360"
           step="0.01"
           value={color ?? 0}
-          style={{ "--selected-color": toBooColor(color ?? 0) } as CSSProperties}
           onChange={onColorChange}
         />
       </div>

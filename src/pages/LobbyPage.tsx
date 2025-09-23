@@ -11,14 +11,16 @@ function LobbyPage({ onStart, players }: LobbyPageProps) {
   const renderedPlayers = players.map((player) => PlayerRow(player)).concat();
 
   return (
-    <div className="page">
+    <div className="page lobby">
       <div className="title">
-        <span className="highlight">{players.length}</span> Player(s) Connected!
+        {players.length} player{players.length > 1 ? "s" : ""} connected
       </div>
       <div className="players">
         {renderedPlayers}
       </div>
-      <button className="button" onClick={onStart} type="button">Start</button>
+      <button className="button" onClick={onStart} type="button">
+        Start game
+      </button>
     </div>
   );
 }

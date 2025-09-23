@@ -4,6 +4,7 @@
 
 .endgame .canvascard {
   flex-grow: 1;
+  margin: 12px 0;
 }
 
 .endgame #canvas {
@@ -17,6 +18,17 @@
 
 .endgame .multirow {
   display: flex;
+}
+
+.endgame .button {
+  margin-top: 24px;
+}
+
+.ranks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 0;
 }
 
 .rank {
@@ -33,19 +45,22 @@
   width: 50px;
 }
 
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 0;
+}
+
 .card {
-  background-color: #fafafa;
+  background-color: #ffffffcc;
   border-radius: 4px;
-  border: none;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
   color: rgba(0, 0, 0, 0.87);
-  margin: 12px 0;
   overflow: hidden;
 }
 
 .card .toprow {
   align-items: center;
-  background-color: #cccccc;
   display: flex;
   padding: 4px;
 }
