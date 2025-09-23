@@ -27,10 +27,10 @@
 .boo-range-input::-webkit-slider-thumb {
   appearance: none;
   background-color: var(--primary-color);
-  background-image: url("./static/boo-outline.svg");
+  background-image: url("../static/boo-outline.svg");
   box-sizing: border-box;
   cursor: grab;
   height: 32px;
-  mask-image: url("./static/boo-mask.svg");
+  mask-image: url("../static/boo-mask.svg");
   width: 32px;
 }
