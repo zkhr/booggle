@@ -34,9 +34,9 @@
 }
 
 .card {
-  background-color: #ffffffcc;
+  background-color: var(--thin-background);
   border-radius: 4px;
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--on-thin-background);
   overflow: hidden;
 }
 

@@ -10,12 +10,14 @@ import type {
   GameState,
   RequestPacket,
   ResponsePacket,
+  Theme,
   User,
   Word,
   World,
 } from "../common/types.ts";
 import ResponsePacketRouter from "./ResponsePacketRouter.ts";
 import { toBooColor, toBooSecondaryColor } from "./components/Boo.tsx";
+import { getCookieValue, saveCookieValue } from "./cookies.ts";
 
 function App() {
   const socket = useRef<WebSocket | null>(null);
@@ -28,13 +30,22 @@ function App() {
     timeElapsed: 0,
     rosterId: "",
   });
-  const [user, setUser] = useImmer<User>(() => loadUser());
+  const [user, setUser] = useImmer<User>(() => {
+    return {
+      token: getCookieValue("token", ""),
+      nick: getCookieValue("nick", ""),
+      color: parseInt(getCookieValue("color", "")),
+    };
+  });
   const [words, setWords] = useImmer<Word[]>([]);
   const [results, setResults] = useImmer<EndGameResults>({
     letters: [],
     telemetryMap: [],
     scores: [],
   });
+  const [theme, setTheme] = useImmer<Theme>(() =>
+    getCookieValue("theme", "Rainbow") as Theme
+  );
 
   // Add references to values that we read when handling response packets.
   // Note that we can't use the state directly, since it is stale in the
@@ -52,26 +63,12 @@ function App() {
     style.setProperty("--secondary-color", toBooSecondaryColor(user.color));
   }, [user]);
 
-  /** Loads the initial player data from the user's cookies. */
-  function loadUser(): User {
-    const user: User = { color: 0, nick: "", token: "" };
-    const parts = document.cookie.split("; ");
-    for (const part of parts) {
-      const [key, value] = part.split("=");
-      switch (key) {
-        case "token":
-          user.token = value;
-          break;
-        case "nick":
-          user.nick = value;
-          break;
-        case "color":
-          user.color = parseInt(value);
-          break;
-      }
-    }
-    return user;
-  }
+  useEffect(() => {
+    document.body.classList.toggle("light-mode", theme === "Light");
+    document.body.classList.toggle("dark-mode", theme === "Dark");
+    document.body.classList.toggle("rainbow-mode", theme === "Rainbow");
+    saveCookieValue("theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     gameStateRef.current = gameState;
@@ -108,9 +105,11 @@ function App() {
       return (
         <LoginPage
           user={user}
+          theme={theme}
           onJoin={() => handleJoinButton()}
           onNickChange={(e) => handleNickChange(e)}
           onColorChange={(e) => handleColorChange(e)}
+          onThemeChange={(e) => handleThemeChange(e)}
         />
       );
     case "Lobby":
@@ -157,6 +156,14 @@ function App() {
     setUser((draft) => {
       draft.color = Math.floor(parseInt(e.target.value));
     });
+  }
+
+  function handleThemeChange(e: React.MouseEvent) {
+    const target = e.target as HTMLElement;
+    const button = target.closest(".theme-button") as HTMLButtonElement;
+    if (button) {
+      setTheme(button.value as Theme);
+    }
   }
 
   function handleStartButton() {

@@ -5,8 +5,8 @@
 }
 
 .cell {
-  background-color: #ffffffcc;
-  color: rgba(0, 0, 0, 0.87);
+  background-color: var(--thin-background);
+  color: var(--on-thin-background);
   border-radius: 4px;
   font-family: "Rubik";
   font-size: 28px;

@@ -14,6 +14,7 @@ import type {
   World,
 } from "../common/types.ts";
 import type { Updater } from "use-immer";
+import {saveCookieValue} from "./cookies.ts";
 
 class ResponsePacketRouter {
   readonly gameStateRef: RefObject<GameState>;
@@ -73,9 +74,9 @@ class ResponsePacketRouter {
       draft.color = response.color;
       draft.token = response.token;
     });
-    saveCookie("token", response.token);
-    saveCookie("nick", response.nick);
-    saveCookie("color", response.color.toString());
+    saveCookieValue("token", response.token);
+    saveCookieValue("nick", response.nick);
+    saveCookieValue("color", response.color.toString());
     this.setWorld(response.world);
     this.setGameState(response.world.state === "Running" ? "InGame" : "Lobby");
   }
@@ -124,11 +125,6 @@ class ResponsePacketRouter {
     this.setWords([]);
     this.setGameState("PostGame");
   }
-}
-
-function saveCookie(key: string, value: string) {
-  document.cookie = key + "=" + value +
-    ";path=/;expires=Fri, 31 Dec 9999 23:59:59 GMT";
 }
 
 export default ResponsePacketRouter;

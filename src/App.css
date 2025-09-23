@@ -1,11 +1,49 @@
 body {
   --font-1: "Viga";
   align-items: start;
-  background-color: var(--secondary-color);
   font-family: "Roboto";
   font: sans-serif;
   margin: 0;
   padding: 0;
+}
+
+body.rainbow-mode {
+  background-color: var(--secondary-color);
+  color: rgba(0, 0, 0, 0.87);
+  --button-background: var(--primary-color);
+  --on-button-background: #fafafa;
+  --thin-background: #ffffffcc;
+  --on-thin-background: #1d1d1d;
+  --selected-theme: var(--primary-color);
+  --on-selected-theme: #fafafa;
+  --error-color: #e04f44;
+  --boo-outline: #000;
+}
+
+body.light-mode {
+  background-color: #f0f0f0;
+  color: #1d1d1d;
+  --button-background: #ffffffcc;
+  --on-button-background: #1d1d1d;
+  --thin-background: #ffffffcc;
+  --on-thin-background: #1d1d1d;
+  --selected-theme: #fdf6e3;
+  --on-selected-theme: #546375;
+  --error-color: #e04f44;
+  --boo-outline: #000;
+}
+
+body.dark-mode {
+  background-color: #1a1a1e;
+  color: #f6f6f6;
+  --button-background: #3d3d3d;
+  --on-button-background: #f6f6f6;
+  --thin-background: #3d3d3d;
+  --on-thin-background: #f6f6f6;
+  --selected-theme: #b6b6b6;
+  --on-selected-theme: #000;
+  --error-color: #ff5346;
+  --boo-outline: #3d3d3d;
 }
 
 .page {
@@ -14,7 +52,6 @@ body {
 }
 
 .title {
-  color: rgba(0, 0, 0, 0.87);
   font-family: var(--font-1);
   font-size: 30px;
   line-height: 35px;
@@ -22,17 +59,16 @@ body {
 }
 
 .nick {
-  color: rgba(0, 0, 0, 0.87);
   font-family: var(--font-1);
   font-size: 24px;
   margin-left: 8px;
 }
 
 .button {
-  background-color: var(--primary-color);
+  background-color: var(--button-background);
   border: none;
   border-radius: 20px;
-  color: #fafafa;
+  color: var(--on-button-background);
   cursor: pointer;
   display: inline-block;
   font-weight: bold;
@@ -42,10 +78,10 @@ body {
 }
 
 .textinput {
-  background-color: #ffffffcc;
+  background-color: var(--thin-background);
   border-radius: 4px;
   border: none;
-  color: #212121;
+  color: var(--on-thin-background);
   display: inline-block;
   height: 40px;
   outline: 2px solid transparent;

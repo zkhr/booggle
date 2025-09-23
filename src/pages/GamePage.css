@@ -4,13 +4,12 @@
 }
 
 .game .textinput {
-  color: #212121;
   margin-left: 8px;
   width: 152px;
 }
 
 .timer {
-  background-color: #ffffffcc;
+  background-color: var(--thin-background);
   height: 12px;
   position: absolute;
   top: 0;
@@ -26,7 +25,7 @@
 }
 
 .paper {
-  background-color: #ffffffcc;
+  background-color: var(--thin-background);
   border-radius: 0 0 4px 4px;
   font-size: 16px;
   left: 184px;
@@ -40,9 +39,9 @@
 }
 
 .word.valid {
-  color: #484848;
+  color: var(--on-thin-background);
 }
 
 .word:not(.valid) {
-  color: #e04f44;
+  color: var(--error-color);
 }

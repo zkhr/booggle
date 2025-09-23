@@ -23,7 +23,7 @@ booggle/
 ├── src/                          # React frontend (FE)
 │   ├── components/
 │   │  ├── Board.{tsx,css}        # Renders the game board
-│   │  ├── Boo.tsx                # Renders a Boo icon
+│   │  ├── Boo.{tsx,css}          # Renders a Boo icon
 │   │  └── BooPicker.{tsx,css}    # Renders the Boo color selector.
 │   ├── pages/
 │   │  ├── GamePage.{tsx,css}     # Game page when playing booggle

@@ -1,3 +1,34 @@
+.title-row {
+  display: flex;
+}
+
+.title-row .title {
+  flex-grow: 1;
+}
+
+.theme-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.theme-button {
+  align-items: center;
+  background: var(--thin-background);
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  fill: var(--on-thin-background);
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+}
+
+.theme-button.selected {
+  background: var(--selected-theme);
+  fill: var(--on-selected-theme);
+}
+
 .section {
   padding-top: 16px;
 }

@@ -120,3 +120,5 @@ export interface Word {
   text: string;
   isValid: boolean;
 }
+
+export type Theme = "Light" | "Dark" | "Rainbow";
