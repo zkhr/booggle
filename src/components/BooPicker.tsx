@@ -30,7 +30,7 @@ function BooPicker({ color, onColorChange }: BooPickerProps) {
 
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
-  });
+  }, []);
 
   return (
     <>
