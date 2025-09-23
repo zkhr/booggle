@@ -2,26 +2,8 @@ import { useEffect } from "react";
 import Board from "../Board.tsx";
 import type { EndGameResults, Score, ScoredWord } from "../../common/types.ts";
 import { GAME_LENGTH_MS } from "../../common/constants.ts";
-
-const BOO_COLORS = [
-  [], // no Boo 0
-  ["#fdd7d4", "#f43f32"], // Boo 1
-  ["#008000", "#00fe00"], // Boo 2
-  ["#878700", "#fdfd00"], // Boo 3
-  ["#5a0000", "#fa0000"], // Boo 4
-  ["#00c3c3", "#00fefe"], // Boo 5
-  ["#c78837", "#fcac46"], // Boo 6
-  ["#990099", "#fe00fe"], // Boo 7
-  ["#000088", "#0000fe"], // Boo 8
-  ["#560f77", "#6d1496"], // Boo 9
-  ["#254e1e", "#2e6226"], // Boo 10
-  ["#3d0000", "#810000"], // Boo 10
-  ["#a06e6e", "#feafaf"], // Boo 12
-  ["#555555", "#939393"], // Boo 13
-  ["#68405b", "#835073"], // Boo 14
-  ["#555524", "#93923f"], // Boo 15
-  ["#7377b6", "#9398e9"], // Boo 16
-];
+import { Boo, toBooColor } from "../Boo.tsx";
+import "./PostGamePage.css";
 
 interface PostGamePageProps {
   results: EndGameResults;
@@ -38,7 +20,7 @@ function PostGamePage({ results, onClose }: PostGamePageProps) {
   }, []);
 
   return (
-    <div className="endgame content">
+    <div className="endgame page">
       <div className="title">
         <span className="highlight">{winner}</span> Wins!
       </div>
@@ -58,7 +40,7 @@ function PostGamePage({ results, onClose }: PostGamePageProps) {
 function renderScore(score: Score) {
   return (
     <div className="rank" key={score.rosterId}>
-      <div className={"boo boo-" + score.boo}></div>
+      <Boo color={score.color} size={40} />
       <div className="nick">{score.nick}</div>
       <div className="points">{score.points} pts</div>
     </div>
@@ -70,7 +52,7 @@ function renderScoreCard(score: Score) {
   return (
     <div className="card" key={score.rosterId}>
       <div className="toprow">
-        <div className={"boo boo-" + score.boo}></div>
+        <Boo color={score.color} size={40} />
         <div className="nick">{score.nick}</div>
       </div>
       <div className="scored-words">
@@ -106,18 +88,10 @@ function updateTelemetry(results: EndGameResults) {
 
   ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
   for (const [rosterId, pairs] of results.telemetryMap) {
-    const boo = results.scores.filter((s) => s.rosterId == rosterId).map((
+    const color = results.scores.filter((s) => s.rosterId == rosterId).map((
       s,
-    ) => s.boo)[0];
-    const gradient = ctx.createLinearGradient(
-      0,
-      0,
-      canvasEl.width,
-      canvasEl.height,
-    );
-    gradient.addColorStop(0, BOO_COLORS[boo][0]);
-    gradient.addColorStop(1, BOO_COLORS[boo][1]);
-    ctx.strokeStyle = gradient;
+    ) => s.color)[0];
+    ctx.strokeStyle = toBooColor(color);
     ctx.lineWidth = 3;
 
     ctx.beginPath();

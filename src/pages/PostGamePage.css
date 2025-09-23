@@ -1,0 +1,62 @@
+.endgame .title {
+  padding-bottom: 8px;
+}
+
+.endgame .canvascard {
+  flex-grow: 1;
+}
+
+.endgame #canvas {
+  display: block;
+}
+
+.endgame .board {
+  margin: 4px 0 12px;
+  min-width: 176px;
+}
+
+.endgame .multirow {
+  display: flex;
+}
+
+.rank {
+  align-items: center;
+  display: flex;
+}
+
+.rank .nick {
+  flex-grow: 2;
+}
+
+.rank .points {
+  font-family: var(--font-1);
+  width: 50px;
+}
+
+.card {
+  background-color: #fafafa;
+  border-radius: 4px;
+  border: none;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  color: rgba(0, 0, 0, 0.87);
+  margin: 12px 0;
+  overflow: hidden;
+}
+
+.card .toprow {
+  align-items: center;
+  background-color: #cccccc;
+  display: flex;
+  padding: 4px;
+}
+
+.scored-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px;
+}
+
+.scored-words :not(.unique) {
+  color: #cccccc;
+}

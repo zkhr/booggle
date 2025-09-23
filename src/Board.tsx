@@ -1,3 +1,5 @@
+import "./Board.css";
+
 interface BoardProps {
   letters: string[];
 }

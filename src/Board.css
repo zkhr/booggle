@@ -1,0 +1,25 @@
+.board {
+  margin: 12px 0 8px;
+  width: 176px;
+}
+
+.cell {
+  background-color: #fafafa;
+  color: rgba(0, 0, 0, 0.87);
+  border: none;
+  border-radius: 2px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  display: inline-block;
+  font-family: "Rubik";
+  font-size: 28px;
+  height: 36px;
+  line-height: 36px;
+  margin-left: 8px;
+  margin-top: 8px;
+  text-align: center;
+  width: 36px;
+}
+
+.cell.qcell {
+  font-size: 24px;
+}

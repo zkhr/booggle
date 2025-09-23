@@ -18,14 +18,14 @@ export interface JoinRequest {
   action: "join";
   token: Token;
   nick: string;
-  boo: number;
+  color: number; 
 }
 
 export interface JoinResponse {
   action: "join";
   token: Token;
   nick: string;
-  boo: number;
+  color: number; 
   world: World;
 }
 
@@ -33,7 +33,7 @@ export interface AddPlayerResponse {
   action: "addplayer";
   rosterId: RosterId;
   nick: string;
-  boo: number;
+  color: number; 
 }
 
 export interface RemovePlayerResponse {
@@ -80,8 +80,8 @@ export interface EndGameResults {
 export type GameTelemetryEntry = [number, number];
 
 export interface Score {
-  boo: number;
   nick: string;
+  color: number; 
   rosterId: RosterId;
   words: ScoredWord[];
   points: number;
@@ -105,14 +105,14 @@ export type WorldState = "Stopped" | "Running";
 export type GameState = "Login" | "Lobby" | "InGame" | "PostGame";
 
 export interface Player {
-  boo: number;
   nick: string;
+  color: number; 
   rosterId: RosterId;
 }
 
 export interface User {
-  boo: number;
   nick: string;
+  color: number; 
   token: Token;
 }
 

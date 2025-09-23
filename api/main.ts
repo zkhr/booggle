@@ -20,8 +20,8 @@ interface Client {
   socket: WebSocket | null;
   token: Token;
   rosterId: RosterId;
-  boo: number;
   nick: string;
+  color: number;
 }
 
 // Clients that have registered with this server. This is reset on server restart.
@@ -73,8 +73,8 @@ function handleJoin(socket: WebSocket, request: JoinRequest): Client {
     socket,
     rosterId,
     token: request.token || randomBytes(16).toString("hex"),
-    boo: request.boo || 1,
     nick: request.nick || "Unnamed Boo",
+    color: request.color || 0,
   };
   clients.set(request.token, client);
 
@@ -94,14 +94,14 @@ function handleJoin(socket: WebSocket, request: JoinRequest): Client {
     action: "join",
     token: client.token,
     nick: client.nick,
-    boo: client.boo,
+    color: client.color,
     world,
   });
   broadcast({
     action: "addplayer",
     rosterId,
     nick: client.nick,
-    boo: client.boo,
+    color: client.color,
   });
   return client;
 }
@@ -120,8 +120,8 @@ function toClientPlayers(): Player[] {
   return [...clients.values()]
     .filter((client) => client.socket !== null)
     .map((client) => ({
-      boo: client.boo,
       nick: client.nick,
+      color: client.color,
       rosterId: client.rosterId,
     }));
 }
@@ -157,8 +157,8 @@ function endGame() {
         return null;
       }
       return {
-        boo: client.boo,
         nick: client.nick,
+        color: client.color,
         rosterId: client.rosterId,
         words: computedScore.words,
         points: computedScore.points,

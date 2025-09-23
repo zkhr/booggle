@@ -50,7 +50,7 @@ booggle is run with the [Deno](https://docs.deno.com) JS runtime.
 ### dictionary
 
 Create a `dictionary.txt` file and place it in the `api/` directory. The format
-is one word per line in lowercase. For example, I'm using the NWL 2020 word
+is one word per line in lowercase. For example, I'm using the NWL 2023 word
 list.
 
 ### env variables

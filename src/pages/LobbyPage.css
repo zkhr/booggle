@@ -1,0 +1,8 @@
+.players {
+  padding: 12px 0;
+}
+
+.player {
+  align-items: center;
+  display: flex;
+}

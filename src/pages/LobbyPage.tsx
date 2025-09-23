@@ -1,4 +1,6 @@
 import type { Player } from "../../common/types.ts";
+import { Boo } from "../Boo.tsx";
+import "./LobbyPage.css";
 
 interface LobbyPageProps {
   onStart: () => void;
@@ -9,7 +11,7 @@ function LobbyPage({ onStart, players }: LobbyPageProps) {
   const renderedPlayers = players.map((player) => PlayerRow(player)).concat();
 
   return (
-    <div className="content">
+    <div className="page">
       <div className="title">
         <span className="highlight">{players.length}</span> Player(s) Connected!
       </div>
@@ -24,7 +26,7 @@ function LobbyPage({ onStart, players }: LobbyPageProps) {
 function PlayerRow(player: Player) {
   return (
     <div className="player" data-roster={player.rosterId} key={player.rosterId}>
-      <div className={"boo boo-" + player.boo} data-index="16"></div>
+      <Boo color={player.color} size={40} />
       <div className="nick">{player.nick}</div>
     </div>
   );

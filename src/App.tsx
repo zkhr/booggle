@@ -47,7 +47,7 @@ function App() {
 
   /** Loads the initial player data from the user's cookies. */
   function loadUser(): User {
-    const user: User = { boo: 1, nick: "", token: "" };
+    const user: User = { color: 0, nick: "", token: "" };
     const parts = document.cookie.split("; ");
     for (const part of parts) {
       const [key, value] = part.split("=");
@@ -58,8 +58,8 @@ function App() {
         case "nick":
           user.nick = value;
           break;
-        case "boo":
-          user.boo = parseInt(value);
+        case "color":
+          user.color = parseInt(value);
           break;
       }
     }
@@ -103,7 +103,7 @@ function App() {
           user={user}
           onJoin={() => handleJoinButton()}
           onNickChange={(e) => handleNickChange(e)}
-          onBooChange={(e) => handleBooChange(e)}
+          onColorChange={(e) => handleColorChange(e)}
         />
       );
     case "Lobby":
@@ -132,7 +132,7 @@ function App() {
   }
 
   function handleJoinButton() {
-    send({ action: "join", token: user.token, nick: user.nick, boo: user.boo });
+    send({ action: "join", token: user.token, nick: user.nick, color: user.color});
   }
 
   function handleNickChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -141,15 +141,10 @@ function App() {
     });
   }
 
-  function handleBooChange(e: React.MouseEvent) {
+  function handleColorChange(e: React.ChangeEvent<HTMLInputElement>) {
     setUser((draft) => {
-      if (e.target instanceof HTMLElement) {
-        const index = parseInt(e.target.dataset.index || "");
-        if (index > 0) {
-          draft.boo = index;
-        }
-      }
-    });
+      draft.color = Math.floor(parseInt(e.target.value));
+    })
   }
 
   function handleStartButton() {

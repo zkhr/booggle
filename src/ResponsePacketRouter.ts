@@ -69,13 +69,13 @@ class ResponsePacketRouter {
 
   private handleJoin(response: JoinResponse) {
     this.setUser((draft) => {
-      draft.boo = response.boo;
       draft.nick = response.nick;
+      draft.color = response.color;
       draft.token = response.token;
     });
     saveCookie("token", response.token);
     saveCookie("nick", response.nick);
-    saveCookie("boo", response.boo.toString());
+    saveCookie("color", response.color.toString());
     this.setWorld(response.world);
     this.setGameState(response.world.state === "Running" ? "InGame" : "Lobby");
   }
@@ -86,8 +86,8 @@ class ResponsePacketRouter {
     }
     this.setWorld((draft) => {
       draft.players.push({
-        boo: response.boo,
         nick: response.nick,
+        color: response.color,
         rosterId: response.rosterId,
       });
     });
