@@ -18,14 +18,14 @@ export interface JoinRequest {
   action: "join";
   token: Token;
   nick: string;
-  color: number; 
+  color: number;
 }
 
 export interface JoinResponse {
   action: "join";
   token: Token;
   nick: string;
-  color: number; 
+  color: number;
   world: World;
 }
 
@@ -33,7 +33,7 @@ export interface AddPlayerResponse {
   action: "addplayer";
   rosterId: RosterId;
   nick: string;
-  color: number; 
+  color: number;
 }
 
 export interface RemovePlayerResponse {
@@ -70,6 +70,7 @@ export interface EndResponse {
 export interface EndGameResults {
   letters: string[];
   telemetryMap: [string, GameTelemetryEntry[]][];
+  allWords: ScoredWord[];
   scores: Score[];
 }
 
@@ -81,7 +82,7 @@ export type GameTelemetryEntry = [number, number];
 
 export interface Score {
   nick: string;
-  color: number; 
+  color: number;
   rosterId: RosterId;
   words: ScoredWord[];
   points: number;
@@ -106,13 +107,13 @@ export type GameState = "Login" | "Lobby" | "InGame" | "PostGame";
 
 export interface Player {
   nick: string;
-  color: number; 
+  color: number;
   rosterId: RosterId;
 }
 
 export interface User {
   nick: string;
-  color: number; 
+  color: number;
   token: Token;
 }
 

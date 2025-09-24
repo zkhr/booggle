@@ -1,5 +1,6 @@
 body {
   --font-1: "Viga";
+  --on-primary-color: #fafafaee;
   align-items: start;
   font-family: "Roboto";
   font: sans-serif;
@@ -11,13 +12,16 @@ body.rainbow-mode {
   background-color: var(--secondary-color);
   color: rgba(0, 0, 0, 0.87);
   --button-background: var(--primary-color);
-  --on-button-background: #fafafa;
+  --on-button-background: var(--on-primary-color);
   --thin-background: #ffffffcc;
   --on-thin-background: #1d1d1d;
   --selected-theme: var(--primary-color);
-  --on-selected-theme: #fafafa;
+  --on-selected-theme: var(--on-primary-color);
   --error-color: #e04f44;
   --boo-outline: #000;
+  --secondary-text: #ccc;
+  --secondary-background: #cecece;
+  --on-secondary-background: #616161;
 }
 
 body.light-mode {
@@ -31,6 +35,9 @@ body.light-mode {
   --on-selected-theme: #546375;
   --error-color: #e04f44;
   --boo-outline: #000;
+  --secondary-text: #ccc;
+  --secondary-background: #969696;
+  --on-secondary-background: #fff;
 }
 
 body.dark-mode {
@@ -44,6 +51,9 @@ body.dark-mode {
   --on-selected-theme: #000;
   --error-color: #ff5346;
   --boo-outline: #3d3d3d;
+  --secondary-text: #767676;
+  --secondary-background: #b6b6b6;
+  --on-secondary-background: #000;
 }
 
 .page {

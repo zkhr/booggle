@@ -1,6 +1,6 @@
 import "jsr:@std/dotenv/load";
 import { randomBytes } from "node:crypto";
-import Dictionary from "./dictionary.ts";
+import { Dictionary } from "./dictionary.ts";
 import Lobby from "./lobby.ts";
 import { GAME_LENGTH_MS } from "../common/constants.ts";
 import type {
@@ -11,6 +11,7 @@ import type {
   ResponsePacket,
   RosterId,
   Score,
+  ScoredWord,
   Token,
   World,
 } from "../common/types.ts";
@@ -151,6 +152,10 @@ function startGame(client: Client | null) {
 }
 
 function endGame() {
+  const allWords: ScoredWord[] = Array.from(
+    lobby.scoringMap.entries(),
+    ([key, value]) => ({ word: key, unique: value === 0 }),
+  );
   const scores: Score[] = buildGameResults(lobby.words, lobby.scoringMap)
     .map((computedScore) => {
       const client = clients.get(computedScore.token);
@@ -169,6 +174,7 @@ function endGame() {
   const results: EndGameResults = {
     letters: lobby.letters,
     telemetryMap: Array.from(lobby.telemetryMap.entries()),
+    allWords,
     scores,
   };
   broadcast({ action: "end", results });
@@ -186,8 +192,7 @@ function handleWord(client: Client | null, token: Token, word: string) {
     return;
   }
 
-  word = word.toLowerCase();
-  const isValid = lobby.handleWord(token, client.rosterId, word);
+  const isValid = lobby.handleWord(token, client.rosterId, word.toUpperCase());
   send(client, { action: "sendword", valid: isValid, word });
 }
 

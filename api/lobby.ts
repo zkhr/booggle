@@ -4,9 +4,10 @@ import type {
   Token,
   WorldState,
 } from "../common/types.ts";
-import Dictionary from "./dictionary.ts";
-import { getPointsForWord, isReachableWord } from "./game.ts";
+import { Dictionary } from "./dictionary.ts";
+import { getPointsForWord } from "./game.ts";
 import { getRandomLetters } from "./letters.ts";
+import { solve } from "./solver.ts";
 
 // Global state, we only have a single in-memory lobby instance for now.
 export default class Lobby {
@@ -48,6 +49,11 @@ export default class Lobby {
     this.words = new Map();
     this.telemetryMap = new Map();
     this.scoringMap = new Map();
+
+    const validWords = solve(this.dictionary, this.letters);
+    for (const word of validWords) {
+      this.scoringMap.set(word, 0);
+    }
   }
 
   endGame() {
@@ -60,23 +66,14 @@ export default class Lobby {
     }
 
     const playedWords = this.words.get(token)!;
-    const isValid = this.isValidWord(playedWords, word);
-    if (isValid) {
+    const numPlayersWithWord = this.scoringMap.get(word);
+    if (playedWords.indexOf(word) < 0 && numPlayersWithWord !== undefined) {
       playedWords.push(word);
-      const numPlayersWithWord = this.scoringMap.get(word) || 0;
       this.scoringMap.set(word, numPlayersWithWord + 1);
       this.updateTelemetry(rosterId, word);
+      return true;
     }
-    return isValid;
-  }
-
-  isValidWord(playedWords: string[], word: string) {
-    return (
-      word.length >= 3 &&
-      playedWords.indexOf(word) < 0 &&
-      this.dictionary.isWord(word) &&
-      isReachableWord(word, this.letters)
-    );
+    return false;
   }
 
   updateTelemetry(rosterId: RosterId, word: string) {

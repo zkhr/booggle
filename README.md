@@ -54,8 +54,8 @@ booggle is run with the [Deno](https://docs.deno.com) JS runtime.
 ### dictionary
 
 Create a `dictionary.txt` file and place it in the `api/` directory. The format
-is one word per line in lowercase. For example, I'm using the NWL 2023 word
-list.
+is one word per line in uppercase (including only words of length 3 or greater).
+For example, I'm using (a subset of) the NWL 2023 word list.
 
 ### env variables
 
@@ -86,12 +86,13 @@ For running the server in your local environment, run:
 $ deno run dev
 ```
 
-This will spun up a Vite dev server for your FE (on port 9000) and your API server (on port 9001).
+This will spun up a Vite dev server for your FE (on port 9000) and your API
+server (on port 9001).
 
 ## Running the FE
 
-The frontend can be served by any system that serves static content. For example, I 
-have an nginx server that sets:
+The frontend can be served by any system that serves static content. For
+example, I have an nginx server that sets:
 
 ```
 server {
@@ -124,4 +125,5 @@ For running the server in production, run:
 $ deno run serve
 ```
 
-This builds the static content for your FE and runs your API server (on port 9001).
+This builds the static content for your FE and runs your API server (on port
+9001).

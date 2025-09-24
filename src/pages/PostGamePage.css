@@ -40,24 +40,26 @@
   overflow: hidden;
 }
 
-.card .toprow {
-  align-items: center;
-  display: flex;
-  padding: 8px 12px;
-  gap: 4px;
-}
-
-.card .nick {
+.toprow {
+  color: var(--on-primary-color);
+  font-family: var(--font-1);
   font-size: 18px;
+  padding: 8px 12px;
 }
 
 .scored-words {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  padding: 8px;
+  padding: 12px;
+  text-transform: lowercase;
 }
 
 .scored-words :not(.unique) {
-  color: #cccccc;
+  color: var(--secondary-text);
+}
+
+.all-words {
+  background: var(--secondary-background);
+  color: var(--on-secondary-background);
 }

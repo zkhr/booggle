@@ -25,6 +25,7 @@ function PostGamePage({ results, onClose }: PostGamePageProps) {
       <div className="entries">
         {renderedScores}
         {renderedCards}
+        {renderAllWordsCard(results.allWords)}
         <div className="multirow">
           <div id="canvascard" className="card canvascard">
             <canvas id="canvas" height="168"></canvas>
@@ -56,12 +57,23 @@ function renderScoreCard(score: Score) {
   return (
     <div className="card" key={score.rosterId}>
       <div className="toprow" style={{ "background": toBooColor(score.color) }}>
-        <Boo color={score.color} size={24} />
-        <div className="nick">{score.nick}</div>
+        {score.nick}
       </div>
       <div className="scored-words">
         {renderedWords}
       </div>
+    </div>
+  );
+}
+
+function renderAllWordsCard(allWords: ScoredWord[]) {
+  const renderedWords = allWords
+    .filter((w) => w.unique)
+    .map((w, i) => renderWord(w, i)).concat();
+  return (
+    <div className="card" key="all-words">
+      <div className="toprow all-words">other possible words</div>
+      <div className="scored-words">{renderedWords}</div>
     </div>
   );
 }

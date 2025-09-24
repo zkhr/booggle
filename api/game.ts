@@ -1,7 +1,5 @@
 import type { ScoredWord, Token } from "../common/types.ts";
 
-const BOARD_SIZE = 4;
-
 /** A score for a player, keyed by their internal token. */
 interface ComputedScore {
   token: Token;
@@ -52,76 +50,4 @@ export function getPointsForWord(word: string) {
     default:
       return 11;
   }
-}
-
-export function isReachableWord(word: string, letters: string[]) {
-  word = word.toUpperCase();
-
-  // Possible paths is an array of paths. Each path is an array of indices in
-  // letters.
-  let possiblePaths: number[][] = [];
-  let prevLetter: string = word[0];
-
-  // Find the locations on the board with the first letter of the word.
-  for (let i = 0; i < letters.length; i++) {
-    if (letters[i] == word[0]) {
-      possiblePaths.push([i]);
-    }
-  }
-
-  // Then, one letter at a time, find any valid paths continuing from the
-  // previous paths found in the last iteration of the loop.
-  for (let i = 1; i < word.length; i++) {
-    if (prevLetter == "Q") {
-      prevLetter = word[i];
-      continue;
-    }
-    const newPaths: number[][] = [];
-    for (const path of possiblePaths) {
-      const lastIndex = path[path.length - 1];
-      const xCoord = lastIndex % 4;
-      const yCoord = Math.floor(lastIndex / 4);
-      const validIndices = [];
-      if (xCoord > 0) {
-        validIndices.push(lastIndex - 1);
-      }
-      if (xCoord > 0 && yCoord > 0) {
-        validIndices.push(lastIndex - BOARD_SIZE - 1);
-      }
-      if (xCoord > 0 && yCoord < BOARD_SIZE - 1) {
-        validIndices.push(lastIndex + BOARD_SIZE - 1);
-      }
-      if (xCoord < BOARD_SIZE - 1) {
-        validIndices.push(lastIndex + 1);
-      }
-      if (xCoord < BOARD_SIZE - 1 && yCoord > 0) {
-        validIndices.push(lastIndex - BOARD_SIZE + 1);
-      }
-      if (xCoord < BOARD_SIZE - 1 && yCoord < BOARD_SIZE - 1) {
-        validIndices.push(lastIndex + BOARD_SIZE + 1);
-      }
-      if (yCoord > 0) {
-        validIndices.push(lastIndex - BOARD_SIZE);
-      }
-      if (yCoord < BOARD_SIZE - 1) {
-        validIndices.push(lastIndex + BOARD_SIZE);
-      }
-      for (const index of validIndices) {
-        if (
-          index >= 0 &&
-          index < BOARD_SIZE * BOARD_SIZE &&
-          letters[index] == word[i] &&
-          path.indexOf(index) < 0
-        ) {
-          newPaths.push([...path, index]);
-        }
-      }
-    }
-    if (!newPaths.length) {
-      return false;
-    }
-    possiblePaths = newPaths;
-    prevLetter = word[i];
-  }
-  return true;
 }
