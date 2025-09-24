@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Board from "../components/Board.tsx";
 import type { Word } from "../../common/types.ts";
-import { GAME_LENGTH_MS } from "../../common/constants.ts";
 import "./GamePage.css";
 
 interface GamePageProps {
@@ -22,8 +21,16 @@ function LobbyPage(
   // Update the page timer every second.
   useEffect(() => {
     const startTime = Date.now() - initialTimeElapsed;
+    const gameLengthSeconds = import.meta.env.VITE_GAME_DURATION_SECONDS;
+    if (!gameLengthSeconds) {
+      return console.error(
+        "Missing VITE_GAME_DURATION_SECONDS in booggle env config. Please review https://github.com/zkhr/booggle#prerequisites.",
+      );
+    }
     const callbackId = setInterval(() => {
-      setPercentElapsed((Date.now() - startTime) / GAME_LENGTH_MS * 100);
+      setPercentElapsed(
+        100 * (Date.now() - startTime) / (gameLengthSeconds * 1000),
+      );
     }, 1000);
     return () => clearInterval(callbackId);
   }, []);

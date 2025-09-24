@@ -41,6 +41,7 @@ function App() {
   const [results, setResults] = useImmer<EndGameResults>({
     letters: [],
     telemetryMap: [],
+    allWords: [],
     scores: [],
   });
   const [theme, setTheme] = useImmer<Theme>(() =>
@@ -185,7 +186,6 @@ function App() {
   /** Sends a packet to the server via the websocket. */
   function send(packet: RequestPacket) {
     const message = JSON.stringify(packet);
-    console.log("sending", message);
     socket.current?.send(message);
   }
 }

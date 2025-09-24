@@ -15,10 +15,9 @@ booggle/
 │   ├── game.ts                   # Contains logic for handling game behavior
 │   ├── letters.ts                # Generates board state for a new game
 │   ├── lobby.ts                  # Tracks game state
-│   ├── main.ts                   # Entry point to the API server
+│   └── main.ts                   # Entry point to the API server
 ├── common/
-│   ├── constants.ts              # Defines shared constants (for API and FE)
-│   ├── types.ts                  # Defines shared types (for API and FE)
+│   └── types.ts                  # Defines shared types (for API and FE)
 ├── dist/                         # Generated static content when building the FE 
 ├── src/                          # React frontend (FE)
 │   ├── components/
@@ -65,6 +64,7 @@ in local development I have:
 ```sh
 DEV_FE_PORT=9000
 API_PORT=9001
+VITE_GAME_DURATION_SECONDS=20
 VITE_WEBSOCKET_URL="ws://localhost:9001"
 ```
 
@@ -73,6 +73,7 @@ and in prod I use:
 ```sh
 DEV_FE_PORT=9000
 API_PORT=9001
+VITE_GAME_DURATION_SECONDS=180
 VITE_WEBSOCKET_URL="wss://ari.blumenthal.dev:9001"
 SSL_CERT_FILENAME="/path/to/fullchain.pem"
 SSL_KEY_FILENAME="/path/to/privkey.pem"

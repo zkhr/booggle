@@ -48,11 +48,25 @@
 }
 
 .scored-words {
+  padding: 12px;
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  padding: 12px;
   text-transform: lowercase;
+}
+
+.words-wrapper {
+  display: grid;
+  transition: grid-template-rows 0.2s ease-in-out;
+  grid-template-rows: 1fr;
+}
+
+.words-wrapper.hidden {
+  grid-template-rows: 0fr;
+}
+
+.words-wrapper > div {
+  overflow: hidden;
 }
 
 .scored-words :not(.unique) {
@@ -62,4 +76,9 @@
 .all-words {
   background: var(--secondary-background);
   color: var(--on-secondary-background);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }

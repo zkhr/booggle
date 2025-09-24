@@ -44,15 +44,22 @@ export default class Lobby {
 
   startGame() {
     this.state = "Running";
-    this.letters = getRandomLetters();
     this.startTime = Date.now();
     this.words = new Map();
     this.telemetryMap = new Map();
-    this.scoringMap = new Map();
 
-    const validWords = solve(this.dictionary, this.letters);
-    for (const word of validWords) {
-      this.scoringMap.set(word, 0);
+    // Re-roll until we find a game state with more than 60 valid words. From
+    // 10,000 samples, this will drop ~20% of boards generated.
+    while (true) {
+      this.letters = getRandomLetters();
+      this.scoringMap = new Map();
+      const validWords = solve(this.dictionary, this.letters);
+      if (validWords.size > 60) {
+        for (const word of validWords) {
+          this.scoringMap.set(word, 0);
+        }
+        return;
+      }
     }
   }
 

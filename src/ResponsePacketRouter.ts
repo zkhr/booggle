@@ -14,7 +14,7 @@ import type {
   World,
 } from "../common/types.ts";
 import type { Updater } from "use-immer";
-import {saveCookieValue} from "./cookies.ts";
+import { saveCookieValue } from "./cookies.ts";
 
 class ResponsePacketRouter {
   readonly gameStateRef: RefObject<GameState>;
@@ -44,9 +44,8 @@ class ResponsePacketRouter {
   }
 
   route(packet: ResponsePacket) {
-    console.log("[packet]", packet);
     if (this.gameStateRef.current === "Login" && packet.action != "join") {
-      console.log(`[dropped ${packet.action}]`);
+      console.log("[dropped]", packet);
       return;
     }
 

@@ -1,5 +1,6 @@
 import { Dictionary, DictionaryTrieNode } from "./dictionary.ts";
-import { BOARD_SIZE } from "../common/constants.ts";
+
+const BOARD_SIZE = 4;
 
 export function solve(dictionary: Dictionary, letters: string[]): Set<string> {
   const validWords = new Set<string>();
@@ -25,8 +26,8 @@ export function solve(dictionary: Dictionary, letters: string[]): Set<string> {
     }
 
     // Find all indices adjacent to our current index.
-    const xCoord = step.currIndex % 4;
-    const yCoord = Math.floor(step.currIndex / 4);
+    const xCoord = step.currIndex % BOARD_SIZE;
+    const yCoord = Math.floor(step.currIndex / BOARD_SIZE);
     const candidateIndices = [];
     if (xCoord > 0) {
       candidateIndices.push(step.currIndex - 1);

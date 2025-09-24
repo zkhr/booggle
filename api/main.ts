@@ -2,7 +2,6 @@ import "jsr:@std/dotenv/load";
 import { randomBytes } from "node:crypto";
 import { Dictionary } from "./dictionary.ts";
 import Lobby from "./lobby.ts";
-import { GAME_LENGTH_MS } from "../common/constants.ts";
 import type {
   EndGameResults,
   JoinRequest,
@@ -34,6 +33,13 @@ const dictionary = new Dictionary();
 // The lobby to manage game state. Note that there is currently only one lobby
 // for all users.
 const lobby = new Lobby(dictionary);
+
+const gameDurationSeconds = parseInt(
+  Deno.env.get("VITE_GAME_DURATION_SECONDS") || "",
+);
+if (!gameDurationSeconds) {
+  throw new Error("Missing VITE_GAME_DURATION_SECONDS flag.");
+}
 
 Deno.serve(
   buildServerOptionsFromEnv(),
@@ -145,7 +151,7 @@ function startGame(client: Client | null) {
   lobby.startGame();
 
   // Register a callback to end the game after a specified duration.
-  setTimeout(endGame, GAME_LENGTH_MS);
+  setTimeout(endGame, gameDurationSeconds * 1000);
 
   // Let users know the game has started.
   broadcast({ action: "start", letters: lobby.letters });

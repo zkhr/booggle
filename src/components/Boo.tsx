@@ -24,7 +24,7 @@ export function Boo({ color, size }: BooProps) {
       <path d="M36 24 H 40 V 20 H 48 V 24 H 52 V 32 H 48 V 36 H 44 V 32 H 48 V 24 H 40 V 28 H 36 V 24" />
       <path
         d="M 8 28 H 12 V 32 H 16 V 28 H 20 V 32 H 24 V 28 H 28 V 40 H 32 V 48 H 28 V 44 H 24 V 48 H 20 V 44 H 16 V 48 H 12 V 40 H 8 V 28"
-        fill-opacity="0.8"
+        fillOpacity="0.8"
       />
     </svg>
   );
