@@ -2,6 +2,9 @@ import { Dictionary, DictionaryTrieNode } from "./dictionary.ts";
 
 const BOARD_SIZE = 4;
 
+/** A map from an index on the board to its neighboring indices. */
+const neighbors = buildNeighborsMap();
+
 export function solve(dictionary: Dictionary, letters: string[]): Set<string> {
   const validWords = new Set<string>();
   const steps: SolveStep[] = [];
@@ -27,38 +30,9 @@ export function solve(dictionary: Dictionary, letters: string[]): Set<string> {
       validWords.add(word);
     }
 
-    // Find all indices adjacent to our current index.
-    const xCoord = step.currIndex % BOARD_SIZE;
-    const yCoord = Math.floor(step.currIndex / BOARD_SIZE);
-    const candidateIndices = [];
-    if (xCoord > 0) {
-      candidateIndices.push(step.currIndex - 1);
-    }
-    if (xCoord > 0 && yCoord > 0) {
-      candidateIndices.push(step.currIndex - BOARD_SIZE - 1);
-    }
-    if (xCoord > 0 && yCoord < BOARD_SIZE - 1) {
-      candidateIndices.push(step.currIndex + BOARD_SIZE - 1);
-    }
-    if (xCoord < BOARD_SIZE - 1) {
-      candidateIndices.push(step.currIndex + 1);
-    }
-    if (xCoord < BOARD_SIZE - 1 && yCoord > 0) {
-      candidateIndices.push(step.currIndex - BOARD_SIZE + 1);
-    }
-    if (xCoord < BOARD_SIZE - 1 && yCoord < BOARD_SIZE - 1) {
-      candidateIndices.push(step.currIndex + BOARD_SIZE + 1);
-    }
-    if (yCoord > 0) {
-      candidateIndices.push(step.currIndex - BOARD_SIZE);
-    }
-    if (yCoord < BOARD_SIZE - 1) {
-      candidateIndices.push(step.currIndex + BOARD_SIZE);
-    }
-
     // For each valid index that hasn't already been used, add it to the steps
     // left to solve if there are candidate words to check in the trie.
-    for (const index of candidateIndices) {
+    for (const index of neighbors.get(step.currIndex)!) {
       const letter = letters[index];
       const childNode = step.currNode.children.get(letter);
       if (childNode && !step.usedIndices.includes(index)) {
@@ -72,6 +46,30 @@ export function solve(dictionary: Dictionary, letters: string[]): Set<string> {
   }
 
   return validWords;
+}
+
+/** Returns a map from an index on the board to its neighboring indices. */
+function buildNeighborsMap(): Map<number, number[]> {
+  const neighbors = new Map();
+
+  for (let i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
+    const xCoord = i % BOARD_SIZE;
+    const yCoord = Math.floor(i / BOARD_SIZE);
+    const indices = [];
+    for (let x = xCoord - 1; x <= xCoord + 1; x++) {
+      for (let y = yCoord - 1; y <= yCoord + 1; y++) {
+        const isValidX = x >= 0 && x < BOARD_SIZE;
+        const isValidY = y >= 0 && y < BOARD_SIZE;
+        const isSameIndex = x === xCoord && y === yCoord;
+        if (isValidX && isValidY && !isSameIndex) {
+          indices.push(y * BOARD_SIZE + x);
+        }
+      }
+    }
+    neighbors.set(i, indices);
+  }
+
+  return neighbors;
 }
 
 interface SolveStep {
