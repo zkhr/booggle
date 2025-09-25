@@ -100,10 +100,19 @@ function PostGamePage({ results, onClose }: PostGamePageProps) {
 
   function renderWord(scoredWord: ScoredWord, index: number) {
     return (
-      <span className={scoredWord.unique ? "unique" : ""} key={index}>
+      <span className={getWordClass(scoredWord)} key={index}>
         {scoredWord.word}
       </span>
     );
+  }
+
+  function getWordClass(scoredWord: ScoredWord) {
+    if (!scoredWord.unique) {
+      return "duplicate";
+    } else if (scoredWord.word.length > 5) {
+      return "emphasis";
+    }
+    return "";
   }
 
   function updateTelemetry(results: EndGameResults) {

@@ -34,7 +34,7 @@ function App() {
     return {
       token: getCookieValue("token", ""),
       nick: getCookieValue("nick", ""),
-      color: parseInt(getCookieValue("color", "")),
+      color: parseInt(getCookieValue("color", "0")),
     };
   });
   const [words, setWords] = useImmer<Word[]>([]);
