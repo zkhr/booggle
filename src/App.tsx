@@ -16,7 +16,7 @@ import type {
   World,
 } from "../common/types.ts";
 import ResponsePacketRouter from "./ResponsePacketRouter.ts";
-import { toBooColor, toBooSecondaryColor } from "./components/Boo.tsx";
+import { Boo, toBooColor, toBooSecondaryColor } from "./components/Boo.tsx";
 import { getCookieValue, saveCookieValue } from "./cookies.ts";
 
 function App() {
@@ -62,6 +62,18 @@ function App() {
     const style = document.documentElement.style;
     style.setProperty("--primary-color", toBooColor(user.color));
     style.setProperty("--secondary-color", toBooSecondaryColor(user.color));
+
+    // Update the favicon to the user's selected color.
+    const faviconSvg = document.querySelector("#favicon-wrapper svg");
+    if (faviconSvg) {
+      const faviconStr = new XMLSerializer().serializeToString(faviconSvg);
+      const href = "data:image/svg+xml;base64," + btoa(faviconStr);
+      document.querySelector('link[rel="icon"]')?.setAttribute("href", href);
+      document.querySelector('link[rel="apple-touch-icon"]')?.setAttribute(
+        "href",
+        href,
+      );
+    }
   }, [user]);
 
   useEffect(() => {
@@ -104,14 +116,19 @@ function App() {
   switch (gameState) {
     case "Login":
       return (
-        <LoginPage
-          user={user}
-          theme={theme}
-          onJoin={() => handleJoinButton()}
-          onNickChange={(e) => handleNickChange(e)}
-          onColorChange={(e) => handleColorChange(e)}
-          onThemeChange={(e) => handleThemeChange(e)}
-        />
+        <>
+          <LoginPage
+            user={user}
+            theme={theme}
+            onJoin={() => handleJoinButton()}
+            onNickChange={(e) => handleNickChange(e)}
+            onColorChange={(e) => handleColorChange(e)}
+            onThemeChange={(e) => handleThemeChange(e)}
+          />
+          <div id="favicon-wrapper" style={{ display: "none" }}>
+            <Boo color={user.color} size={0} />
+          </div>
+        </>
       );
     case "Lobby":
       return (
