@@ -15,7 +15,8 @@ booggle/
 │   ├── game.ts                   # Contains logic for handling game behavior
 │   ├── letters.ts                # Generates board state for a new game
 │   ├── lobby.ts                  # Tracks game state
-│   └── main.ts                   # Entry point to the API server
+│   ├── main.ts                   # Entry point to the API server
+│   └── solver.ts                 # Finds all valid words for a board
 ├── common/
 │   └── types.ts                  # Defines shared types (for API and FE)
 ├── dist/                         # Generated static content when building the FE 
@@ -32,6 +33,7 @@ booggle/
 │   ├── static/                   # Additional static content to be served by the FE
 │   ├── App.tsx                   # Main app with routing
 │   ├── App.css                   # Global app styles
+│   ├── cookies.ts                # Helper for reading and writing the user's cookies
 │   ├── main.tsx                  # React app entry point
 │   └── ResponsePacketRouter.ts   # Handles websocket responses from the API 
 ├── .gitignore                    # Files that aren't tracked by git
