@@ -6,12 +6,18 @@ export class Dictionary {
 
     const dictionaryText = Deno.readTextFileSync("./api/dictionary.txt");
     for (const word of dictionaryText.split("\n")) {
-      let currNode = this.root;
-      for (const letter of word) {
-        currNode = currNode.getOrCreateChildNode(letter);
+      if (/Q[^U]|Q$/.exec(word) === null) {
+        this.addWord(word.replaceAll("QU", "Q"));
       }
-      currNode.isWord = true;
     }
+  }
+
+  private addWord(word: string) {
+    let currNode = this.root;
+    for (const letter of word) {
+      currNode = currNode.getOrCreateChildNode(letter);
+    }
+    currNode.isWord = true;
   }
 }
 

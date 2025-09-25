@@ -73,6 +73,7 @@ function PostGamePage({ results, onClose }: PostGamePageProps) {
   function renderAllWordsCard(allWords: ScoredWord[]) {
     const renderedWords = allWords
       .filter((w) => w.unique)
+      .sort((a, b) => a.word.localeCompare(b.word))
       .map((w, i) => renderWord(w, i)).concat();
     return (
       <div className="card" key="all-words">

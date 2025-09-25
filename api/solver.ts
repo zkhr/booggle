@@ -21,7 +21,9 @@ export function solve(dictionary: Dictionary, letters: string[]): Set<string> {
   while (steps.length > 0) {
     const step = steps.pop()!;
     if (step.currNode.isWord) {
-      const word = step.usedIndices.map((i) => letters[i]).join("");
+      const word = step.usedIndices
+        .map((i) => letters[i] === "Q" ? "QU" : letters[i])
+        .join("");
       validWords.add(word);
     }
 
